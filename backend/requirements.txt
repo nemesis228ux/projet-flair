@@ -1,0 +1,4 @@
+fastapi[standard]          # FastAPI with all optional dependencies for full functionality
+pydantic                   # Data validation and settings management using Python type annotations
+uvicorn[standard]          # ASGI server for FastAPI, with optional dependencies for improved performance and features
+pydantic-settings          # Settings management using Pydantic
