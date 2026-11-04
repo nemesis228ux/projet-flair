@@ -16,4 +16,4 @@ async def get_example_message(
     result = ServiceResult[StringMessage, AppError].service_success(
         data=StringMessage(message="Votre route peut retourner une réponse standardisée.")
     )
-    return result.to_http_api_base_response(response)
+    return result.to_HTTP_api_base_response(response)

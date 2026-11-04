@@ -1,111 +1,144 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-verdict-safe: var(--verdict-safe);
+  --color-verdict-safe-bg: var(--verdict-safe-bg);
+  --color-verdict-safe-text: var(--verdict-safe-text);
+  --color-verdict-suspicious: var(--verdict-suspicious);
+  --color-verdict-suspicious-bg: var(--verdict-suspicious-bg);
+  --color-verdict-suspicious-text: var(--verdict-suspicious-text);
+  --color-verdict-dangerous: var(--verdict-dangerous);
+  --color-verdict-dangerous-bg: var(--verdict-dangerous-bg);
+  --color-verdict-dangerous-text: var(--verdict-dangerous-text);
+}
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: light;
+  --radius: 0.75rem;
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --muted: #F1F5F9;
+  --muted-foreground: #475569;
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #0F172A;
+  --accent: #EFF6FF;
+  --accent-foreground: #1D4ED8;
+  --brand: #2563EB;
+  --ring: #93C5FD;
+  --destructive: #DC2626;
+  --verdict-safe: #16A34A;
+  --verdict-safe-bg: #DCFCE7;
+  --verdict-safe-text: #14532D;
+  --verdict-suspicious: #F59E0B;
+  --verdict-suspicious-bg: #FEF3C7;
+  --verdict-suspicious-text: #78350F;
+  --verdict-dangerous: #DC2626;
+  --verdict-dangerous-bg: #FEE2E2;
+  --verdict-dangerous-text: #7F1D1D;
+}
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+.dark {
+  color-scheme: dark;
+  --background: #0B1220;
+  --foreground: #E6EAF2;
+  --card: #111A2E;
+  --card-foreground: #E6EAF2;
+  --popover: #111A2E;
+  --popover-foreground: #E6EAF2;
+  --border: #1F2A44;
+  --input: #1F2A44;
+  --muted: #16203A;
+  --muted-foreground: #94A3B8;
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-foreground: #FFFFFF;
+  --secondary: #16203A;
+  --secondary-foreground: #E6EAF2;
+  --accent: #172554;
+  --accent-foreground: #93C5FD;
+  --brand: #60A5FA;
+  --ring: #60A5FA;
+  --destructive: #EF4444;
+  --verdict-safe: #22C55E;
+  --verdict-safe-bg: #052E16;
+  --verdict-safe-text: #BBF7D0;
+  --verdict-suspicious: #F59E0B;
+  --verdict-suspicious-bg: #451A03;
+  --verdict-suspicious-text: #FDE68A;
+  --verdict-dangerous: #EF4444;
+  --verdict-dangerous-bg: #450A0A;
+  --verdict-dangerous-text: #FECACA;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply m-0 min-w-80 bg-background text-foreground;
+    min-height: 100vh;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+
+  #root {
+    min-height: 100vh;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+[data-verdict="safe"] [data-slot="progress-indicator"] {
+  background-color: var(--verdict-safe);
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+[data-verdict="suspicious"] [data-slot="progress-indicator"] {
+  background-color: var(--verdict-suspicious);
 }
 
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+[data-verdict="dangerous"] [data-slot="progress-indicator"] {
+  background-color: var(--verdict-dangerous);
 }

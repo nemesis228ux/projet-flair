@@ -1,0 +1,73 @@
+{
+  "brand": "Flair",
+  "header": {
+    "language": "Language",
+    "themeToLight": "Switch to light theme",
+    "themeToDark": "Switch to dark theme"
+  },
+  "navigation": {
+    "main": "Main navigation",
+    "url": "URL",
+    "email": "Email",
+    "password": "Password"
+  },
+  "pages": {
+    "url": {
+      "title": "Check a URL",
+      "description": "Review a link before you open it.",
+      "label": "URL to check",
+      "placeholder": "https://example.com"
+    },
+    "email": {
+      "title": "Check an email",
+      "description": "Look for common signs of phishing and scams.",
+      "label": "Email content",
+      "placeholder": "Paste the email text here"
+    },
+    "password": {
+      "title": "Check a password",
+      "description": "Get a private, one-time password safety check.",
+      "label": "Password",
+      "placeholder": "Enter a password"
+    }
+  },
+  "actions": {
+    "analyze": "Check",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "chooseLanguage": "Choose language"
+  },
+  "common": {
+    "disclaimer": "Flair is an aid to help you assess risk, not a guarantee of safety.",
+    "sensitiveNoticeTitle": "Do not paste sensitive information",
+    "sensitiveNotice": "Remove personal, financial, or confidential details before checking a message.",
+    "passwordPrivacy": "Your password is sent securely to our server, analyzed in memory and never stored or logged.",
+    "wakingUp": "The server is waking up. The first request may take a little longer.",
+    "requestErrorTitle": "We couldn't complete the check",
+    "requestError": "Please check your connection and try again.",
+    "loading": "Checking…"
+  },
+  "result": {
+    "title": "Check result",
+    "score": "Risk score",
+    "reasons": "What we noticed",
+    "sources": "Sources",
+    "tactics": "Possible tactics",
+    "explanation": "Explanation",
+    "breachCount": "Known breach matches: {{count}}",
+    "unknownReason": "Additional signal ({{code}})",
+    "verdict": {
+      "safe": "Appears safe",
+      "suspicious": "Use caution",
+      "dangerous": "Likely dangerous"
+    },
+    "severity": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    }
+  },
+  "reasons": {
+    "STUB_RESULT": "This is a sample result while analysis is being developed."
+  }
+}
