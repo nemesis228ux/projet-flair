@@ -5,3 +5,4 @@ pydantic                   # Data validation and settings management using Pydan
 httpx                      # FastAPI TestClient transport
 pytest                     # Backend tests
 mypy                       # Static type checking
+rapidfuzz                  # Fast fuzzy matching for URL brand-impersonation heuristics

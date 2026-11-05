@@ -3,24 +3,22 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "Flair API"
+    APP_NAME: str
     ENV: str = Field(
-        default="development",
         validation_alias=AliasChoices("ENV", "APP_ENV"),
     )
-    DEBUG: bool = False
-    API_PREFIX: str = "/api/v1"
-    API_HOST: str = "0.0.0.0"
-    API_PORT: int = 8000
-    START_PERIOD: int = 0
-    APP_VERSION: str = "0.1.0"
-    LOG_DIR: str = "logs"
+    DEBUG: bool
+    API_PREFIX: str
+    API_HOST: str
+    API_PORT: int
+    START_PERIOD: int
+    APP_VERSION: str
+    LOG_DIR: str
     ALLOWED_ORIGINS: str = Field(
-        default="http://localhost:5173",
         validation_alias=AliasChoices("ALLOWED_ORIGINS", "CORS_ORIGINS"),
     )
-    GEMINI_API_KEY: str | None = None
-    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_API_KEY: str
+    GEMINI_MODEL: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
