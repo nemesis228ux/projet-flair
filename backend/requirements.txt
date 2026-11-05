@@ -1,4 +1,8 @@
 fastapi[standard]          # FastAPI with all optional dependencies for full functionality
-pydantic                   # Data validation and settings management using Python type annotations
 uvicorn[standard]          # ASGI server for FastAPI, with optional dependencies for improved performance and features
 pydantic-settings          # Settings management using Pydantic
+pydantic                   # Data validation and settings management using Pydantic
+httpx                      # FastAPI TestClient transport
+pytest                     # Backend tests
+mypy                       # Static type checking
+rapidfuzz                  # Fast fuzzy matching for URL brand-impersonation heuristics

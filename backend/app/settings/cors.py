@@ -7,7 +7,7 @@ from app.core.config import settings
 def setup_app_cors(app: FastAPI) -> None:
     origins = [
         origin.strip()
-        for origin in settings.CORS_ORIGINS.split(",")
+        for origin in settings.ALLOWED_ORIGINS.split(",")
         if origin.strip()
     ]
 

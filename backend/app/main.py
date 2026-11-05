@@ -1,9 +1,13 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
+from app.common.business_error import AppError, AppErrorType
+from app.common.constants.messages import Messages
 from app.core.config import settings
 from app.core.logging_config import setup_logging
-from app.routers.v1 import api_router
+from app.routers.v1.api_router import router as public_api_router
 from app.settings.app_lifespan import lifespan
 from app.settings.cors import setup_app_cors
 
@@ -14,7 +18,25 @@ app = FastAPI(
     lifespan=lifespan,
 )
 setup_app_cors(app)
-app.include_router(api_router)
+app.include_router(public_api_router)
+
+
+@app.exception_handler(RequestValidationError)
+async def handle_request_validation_error(
+    _request: Request, _exception: RequestValidationError
+) -> JSONResponse:
+    error = AppError(
+        error_type=AppErrorType.VALIDATION_ERROR,
+        error_message=Messages.VALIDATION_ERROR,
+    )
+    return JSONResponse(
+        status_code=422,
+        content={
+            "success": False,
+            "result": None,
+            "error": error.model_dump(mode="json"),
+        },
+    )
 
 
 @app.get("/", include_in_schema=False)

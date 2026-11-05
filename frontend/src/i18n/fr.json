@@ -1,0 +1,73 @@
+{
+  "brand": "Flair",
+  "header": {
+    "language": "Langue",
+    "themeToLight": "Passer au thème clair",
+    "themeToDark": "Passer au thème sombre"
+  },
+  "navigation": {
+    "main": "Navigation principale",
+    "url": "URL",
+    "email": "E-mail",
+    "password": "Mot de passe"
+  },
+  "pages": {
+    "url": {
+      "title": "Vérifier une URL",
+      "description": "Examinez un lien avant de l’ouvrir.",
+      "label": "URL à vérifier",
+      "placeholder": "https://exemple.fr"
+    },
+    "email": {
+      "title": "Vérifier un e-mail",
+      "description": "Repérez les signes courants d’hameçonnage et d’arnaque.",
+      "label": "Contenu de l’e-mail",
+      "placeholder": "Collez le texte de l’e-mail ici"
+    },
+    "password": {
+      "title": "Vérifier un mot de passe",
+      "description": "Obtenez une vérification privée et ponctuelle.",
+      "label": "Mot de passe",
+      "placeholder": "Saisissez un mot de passe"
+    }
+  },
+  "actions": {
+    "analyze": "Vérifier",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "chooseLanguage": "Choisir la langue"
+  },
+  "common": {
+    "disclaimer": "Flair aide à évaluer les risques, mais ne garantit pas la sécurité.",
+    "sensitiveNoticeTitle": "Ne collez pas d’informations sensibles",
+    "sensitiveNotice": "Retirez les données personnelles, financières ou confidentielles avant de vérifier un message.",
+    "passwordPrivacy": "Votre mot de passe est envoyé de façon sécurisée à notre serveur, analysé en mémoire et jamais stocké ni journalisé.",
+    "wakingUp": "Le serveur se réveille. La première requête peut prendre un peu plus de temps.",
+    "requestErrorTitle": "La vérification n’a pas abouti",
+    "requestError": "Vérifiez votre connexion, puis réessayez.",
+    "loading": "Vérification…"
+  },
+  "result": {
+    "title": "Résultat de la vérification",
+    "score": "Score de risque",
+    "reasons": "Éléments détectés",
+    "sources": "Sources",
+    "tactics": "Techniques possibles",
+    "explanation": "Explication",
+    "breachCount": "Correspondances dans des fuites connues : {{count}}",
+    "unknownReason": "Signal complémentaire ({{code}})",
+    "verdict": {
+      "safe": "Semble sûr",
+      "suspicious": "Restez prudent",
+      "dangerous": "Probablement dangereux"
+    },
+    "severity": {
+      "low": "Faible",
+      "medium": "Moyenne",
+      "high": "Élevée"
+    }
+  },
+  "reasons": {
+    "STUB_RESULT": "Résultat de démonstration pendant le développement de l’analyse."
+  }
+}
