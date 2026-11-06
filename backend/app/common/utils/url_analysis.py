@@ -139,15 +139,11 @@ def _inspect_domain(host_ascii: str) -> list[UrlRiskSignal]:
     if _is_typosquatting(_domain_label(host_ascii)):
         signals.append(_signal("TYPOSQUATTING", Severity.HIGH, 35))
     if labels[-1] in _SUSPICIOUS_TLDS:
-        # detail = valeur dynamique du TLD, injectée dans le template i18n
         signals.append(_signal("SUSPICIOUS_TLD", Severity.MEDIUM, 15, detail=labels[-1]))
-    # Fix: also check the registrable domain (last two labels) so that
-    # subdomains like www.bit.ly are correctly matched.
     registrable = ".".join(labels[-2:]) if len(labels) >= 2 else host_ascii
     if host_ascii in _SHORTENERS or registrable in _SHORTENERS:
         signals.append(_signal("URL_SHORTENER", Severity.LOW, 10))
     if len(labels) > 4:
-        # detail = nombre de niveaux de sous-domaines, injecté dans le template i18n
         signals.append(_signal("MANY_SUBDOMAINS", Severity.LOW, 8, detail=str(len(labels) - 1)))
     return signals
 
@@ -155,8 +151,6 @@ def _inspect_domain(host_ascii: str) -> list[UrlRiskSignal]:
 def _inspect_host(host: str, parsed: ParseResult) -> list[UrlRiskSignal]:
     signals: list[UrlRiskSignal] = []
 
-    # Fix: treat an empty scheme (URL submitted without a scheme) the same as
-    # non-HTTPS so the signal is always emitted when HTTPS is absent.
     effective_scheme = parsed.scheme.lower() if parsed.scheme else ""
     if effective_scheme != "https":
         signals.append(_signal("MISSING_HTTPS", Severity.MEDIUM, 25))
@@ -164,8 +158,6 @@ def _inspect_host(host: str, parsed: ParseResult) -> list[UrlRiskSignal]:
     if parsed.username is not None or parsed.password is not None:
         signals.append(_signal("URL_USERINFO", Severity.MEDIUM, 25))
 
-    # Detect '@' in the path/query that could visually deceive users about
-    # the real host (e.g. https://evil.com/path@google.com).
     raw_path_query = (parsed.path or "") + (f"?{parsed.query}" if parsed.query else "")
     if "@" in raw_path_query:
         signals.append(_signal("AT_IN_PATH", Severity.MEDIUM, 20))
@@ -195,9 +187,8 @@ def _inspect_query(query: str) -> list[UrlRiskSignal]:
         return signals
     for param_name in params:
         if param_name.lower() in _OPEN_REDIRECT_PARAMS:
-            # detail = nom du paramètre, injecté dans le template i18n
             signals.append(_signal("OPEN_REDIRECT_PARAM", Severity.MEDIUM, 20, detail=param_name))
-            break  # one signal is sufficient
+            break  
     return signals
 
 
@@ -221,7 +212,6 @@ def inspect_url(url: str) -> list[UrlRiskSignal]:
         signals.append(_signal("SUSPICIOUS_KEYWORD", Severity.LOW, 8))
 
     if len(value) >= 150:
-        # detail = longueur de l'URL, injectée dans le template i18n
         signals.append(_signal("LONG_URL", Severity.LOW, 5, detail=str(len(value))))
 
     return signals
