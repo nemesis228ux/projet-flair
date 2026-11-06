@@ -27,6 +27,14 @@ The example router constructs a service success result directly. The example use
 - Risk points are added and capped at 100. Scores below 20 are `safe`, 20–59 are `suspicious`, and 60 or above are `dangerous`. The current result source is `heuristics`.
 - The request schema limits URL input to 1–2048 characters. Domain-age checks and external reputation services are not implemented yet.
 
+## Password analysis
+
+- `PasswordAnalysisService` in `app/services/password_analysis_service.py` computes strength locally with `zxcvbn`, then calls the HIBP integration for a breach count and returns the shared `ServiceResult[AnalysisResult, AppError]`.
+- The HIBP integration hashes the submitted password with SHA-1 locally and sends only the first five hexadecimal characters to the Pwned Passwords range API, with `Add-Padding: true`. It compares returned suffixes locally and never logs or persists the submitted password.
+- This endpoint is rate-limited to five requests per minute per client IP. Passwords are not cached. Input is limited to 1–128 characters, and validation responses are handled by the global handler without echoing submitted values.
+- The risk score is the inverse of `zxcvbn`'s 0–4 strength score, scaled to 0–100; a password found in HIBP receives score 100. Stable reason codes include `PASSWORD_TOO_SHORT`, `PASSWORD_WEAK`, and `BREACHED`; the `breach_count` field reports the HIBP count.
+- If HIBP is unavailable or returns an invalid response, the API returns a generic 503 error rather than a success-shaped fallback.
+
 ## Request flow
 
-The intended layered flow is router → service → repository: a router invokes a service, the service invokes a repository, repository outcomes are expressed as `CrudResult`, and the service returns `ServiceResult`; the router converts the service result to the common `ApiBaseResponse` envelope and HTTP status. URL analysis now uses an injected service class and local heuristic utility; email analysis and password checking remain stubs until their implementation is requested. The existing message example also constructs a `ServiceResult` directly.
+The intended layered flow is router → service → repository: a router invokes a service, the service invokes a repository, repository outcomes are expressed as `CrudResult`, and the service returns `ServiceResult`; the router converts the service result to the common `ApiBaseResponse` envelope and HTTP status. Each analysis feature has a separate service module (`url_analysis_service.py`, `password_analysis_service.py`, and `email_analysis_service.py`), while the endpoint definitions remain in the shared analysis router. URL analysis uses an injected service class and local heuristic utility. Password analysis uses an injected service and a wrapped HIBP integration; no database repository is needed because the feature does not persist data. Email analysis remains a stub pending its implementation. API tests are grouped by feature in `test_url_api.py`, `test_password_api.py`, and `test_email_api.py`; HIBP protocol tests are in `test_hibp_integration.py`. The shared `test_api.py` covers the health endpoint.
