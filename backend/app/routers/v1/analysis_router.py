@@ -30,12 +30,13 @@ def get_password_analysis_service() -> PasswordAnalysisService:
 @router.post("/url/analyze", response_model=ApiBaseResponse[AnalysisResult, AppError])
 @limiter.limit("5/minute")
 async def post_url_analysis(
-    request: UrlAnalyzeRequest,
+    request: Request,
+    payload: UrlAnalyzeRequest,
     response: Response,
     service: Annotated[UrlAnalysisService, Depends(get_url_analysis_service)],
 ) -> ApiBaseResponse[AnalysisResult, AppError]:
     result: ServiceResult[AnalysisResult, AppError] = service.analyze(
-        request.url, lang=request.lang
+        payload.url, lang=payload.lang
     )
     return result.to_HTTP_api_base_response(response)
 
@@ -45,7 +46,8 @@ async def post_url_analysis(
 )
 @limiter.limit("5/minute")
 async def post_email_analysis(
-    _request: EmailAnalyzeRequest, response: Response
+    request: Request,
+    data: EmailAnalyzeRequest, response: Response
 ) -> ApiBaseResponse[AnalysisResult, AppError]:
     result: ServiceResult[AnalysisResult, AppError] = analyze_email()
     return result.to_HTTP_api_base_response(response)
@@ -57,6 +59,7 @@ async def post_email_analysis(
 )
 @limiter.limit("5/minute")
 async def post_password_check(
+    request: Request,
     payload: PasswordCheckRequest,
     response: Response,
     service: Annotated[
