@@ -2,11 +2,13 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 
 from app.common.business_error import AppError, AppErrorType
 from app.common.constants.messages import Messages
 from app.core.config import settings
 from app.core.logging_config import setup_logging
+from app.core.rate_limit import limiter
 from app.routers.v1.api_router import router as public_api_router
 from app.settings.app_lifespan import lifespan
 from app.settings.cors import setup_app_cors
@@ -17,6 +19,7 @@ app = FastAPI(
     version=settings.APP_VERSION,
     lifespan=lifespan,
 )
+app.state.limiter = limiter
 setup_app_cors(app)
 app.include_router(public_api_router)
 
@@ -31,6 +34,24 @@ async def handle_request_validation_error(
     )
     return JSONResponse(
         status_code=422,
+        content={
+            "success": False,
+            "result": None,
+            "error": error.model_dump(mode="json"),
+        },
+    )
+
+
+@app.exception_handler(RateLimitExceeded)
+async def handle_rate_limit_exceeded(
+    _request: Request, _exception: RateLimitExceeded
+) -> JSONResponse:
+    error = AppError(
+        error_type=AppErrorType.BAD_REQUEST,
+        error_message=Messages.RATE_LIMIT_EXCEEDED,
+    )
+    return JSONResponse(
+        status_code=429,
         content={
             "success": False,
             "result": None,
