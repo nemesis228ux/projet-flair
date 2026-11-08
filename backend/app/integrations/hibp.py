@@ -50,7 +50,6 @@ def _parse_breach_count(response_text: str, expected_suffix: str) -> int | None:
 async def check_password_breach(
     password: str,
 ) -> GenericAppResult[int, AppError]:
-    # HIBP's range API requires SHA-1; this hash is not used for security.
     password_hash = hashlib.sha1(
         password.encode("utf-8"), usedforsecurity=False
     ).hexdigest().upper()

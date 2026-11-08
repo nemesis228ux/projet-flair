@@ -13,7 +13,7 @@ class HealthResponse(BaseModel):
 router = APIRouter(tags=["health"])
 
 
-@router.get("/api/v1/health", response_model=ApiBaseResponse[HealthResponse, AppError])
+@router.get("/health", response_model=ApiBaseResponse[HealthResponse, AppError])
 async def health(response: Response) -> ApiBaseResponse[HealthResponse, AppError]:
     result: ServiceResult[HealthResponse, AppError] = ServiceResult.service_success(
         data=HealthResponse(status="ok")

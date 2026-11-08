@@ -1,5 +1,8 @@
 class Messages:
     INTERNAL_SERVER_ERROR = "Une erreur interne du serveur. Veuillez réessayer."
+    EMAIL_ANALYSIS_UNAVAILABLE = (
+        "L'analyse de l'email est temporairement indisponible."
+    )
     PASSWORD_BREACH_CHECK_UNAVAILABLE = (
         "La vérification des fuites est temporairement indisponible."
     )

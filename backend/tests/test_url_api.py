@@ -7,7 +7,7 @@ client = TestClient(app)
 
 def test_url_analysis_uses_the_submitted_url_and_shared_wrapper() -> None:
     response = client.post(
-        "/api/url/analyze",
+        "/api/v1/url/analyze",
         json={"url": "https://example.com", "lang": "en"},
     )
 
@@ -26,7 +26,7 @@ def test_url_analysis_uses_the_submitted_url_and_shared_wrapper() -> None:
 
 def test_url_analysis_reports_suspicious_url_signals() -> None:
     response = client.post(
-        "/api/url/analyze",
+        "/api/v1/url/analyze",
         json={"url": "http://paypa1-login.xyz/verify", "lang": "en"},
     )
 
@@ -44,7 +44,7 @@ def test_url_analysis_reports_suspicious_url_signals() -> None:
 
 def test_url_analysis_validates_input_length() -> None:
     response = client.post(
-        "/api/url/analyze",
+        "/api/v1/url/analyze",
         json={"url": "x" * 2049, "lang": "en"},
     )
 
