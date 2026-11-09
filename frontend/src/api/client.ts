@@ -5,7 +5,7 @@ import type {
   Language,
 } from './types'
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '')
+const API_BASE_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
 type AnalysisInput =
   | { url: string }
@@ -44,7 +44,7 @@ async function postAnalysis(
   path: string,
   input: AnalysisInput,
 ): Promise<AnalysisResult> {
-  const response = await fetch(`${API_BASE_URL}/api/${path}`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ...input, lang: currentLanguage() }),

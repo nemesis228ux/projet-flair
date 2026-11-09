@@ -1,5 +1,21 @@
 {
   "brand": "Flair",
+  "home": {
+    "eyebrow": "A practical way to spot scams",
+    "title": "Flair helps you",
+    "titleHighlight": "spot online traps.",
+    "description": "A suspicious link, an unsettling message, or a password you want to check? Take a moment to understand the risks before you act.",
+    "cta": "Explore the tools",
+    "privacyNote": "No account. One check at a time.",
+    "previewLabel": "Unsure before you click?",
+    "previewTitle": "Take a moment to check.",
+    "previewDescription": "Flair highlights useful signals to help you decide what to do next.",
+    "previewFootnote": "The decision is always yours.",
+    "toolsEyebrow": "Flair tools",
+    "toolsTitle": "What would you like to check?",
+    "toolsDescription": "Choose a tool, provide its content, then review the detected signals and what they mean.",
+    "formHint": "Selected tool: {{tool}}"
+  },
   "header": {
     "language": "Language",
     "themeToLight": "Switch to light theme",
@@ -55,7 +71,21 @@
     "tactics": "Possible tactics",
     "explanation": "Explanation",
     "breachCount": "Known breach matches: {{count}}",
-    "unknownReason": "Additional signal ({{code}})",
+    "unknownReason": "Other signal detected",
+    "sourceOther": "Additional source",
+    "sourcesList": {
+      "heuristics": "Detection rules",
+      "zxcvbn": "Password strength check",
+      "hibp": "Have I Been Pwned database",
+      "llm": "AI text analysis"
+    },
+    "sourceDetails": {
+      "heuristics": "Automated checks for common characteristics associated with risk.",
+      "zxcvbn": "Estimates how easily a password could be guessed.",
+      "hibp": "Checks whether the password appears in public breach records. Only the first 5 characters of its SHA-1 fingerprint are sent to this service, never the password itself.",
+      "llm": "Helps explain the content and possible manipulation tactics.",
+      "other": "This source contributed to the analysis."
+    },
     "verdict": {
       "safe": "Appears safe",
       "suspicious": "Use caution",
@@ -68,6 +98,34 @@
     }
   },
   "reasons": {
-    "STUB_RESULT": "This is a sample result while analysis is being developed."
+    "STUB_RESULT": "This is a sample result while analysis is being developed.",
+    "MISSING_HTTPS": "Unencrypted connection",
+    "URL_USERINFO": "Credentials embedded in the address",
+    "AT_IN_PATH": "Character that may obscure the real domain",
+    "PUNYCODE_DOMAIN": "Domain using look-alike characters",
+    "TYPOSQUATTING": "Domain resembling a known brand",
+    "SUSPICIOUS_TLD": "Unusual domain ending",
+    "URL_SHORTENER": "Short link that hides its destination",
+    "MANY_SUBDOMAINS": "Unusual number of subdomains",
+    "IP_ADDRESS_HOST": "IP address used instead of a domain",
+    "MALFORMED_URL": "Malformed web address",
+    "UNSUPPORTED_URL_SCHEME": "Unusual web protocol",
+    "SUSPICIOUS_KEYWORD": "Terms often used in deceptive links",
+    "LONG_URL": "Unusually long web address",
+    "OPEN_REDIRECT_PARAM": "Possible external redirect",
+    "EMAIL_URGENCY": "Pressuring or alarming tone",
+    "EMAIL_CREDENTIAL_REQUEST": "Request for login details or password",
+    "EMAIL_MONEY_REQUEST": "Request for money or payment",
+    "EMAIL_GIFT_CARD_REQUEST": "Request for gift cards",
+    "EMAIL_LINK_MISMATCH": "Link text does not match its destination",
+    "EMAIL_REPLY_TO_MISMATCH": "Reply address differs from the sender",
+    "EMAIL_AUTHENTICATION_FAILURE": "Authentication checks did not pass",
+    "EMAIL_BRAND_IMPERSONATION": "Possible imitation of a known brand",
+    "EMAIL_UNSOLICITED_SOLICITATION": "Unsolicited offer or request",
+    "EMAIL_FINANCIAL_INCENTIVE": "Financial reward used as an incentive",
+    "EMAIL_SENSITIVE_DATA_REQUEST": "Request for sensitive data",
+    "PASSWORD_TOO_SHORT": "Password is too short",
+    "PASSWORD_WEAK": "Password is easy to guess",
+    "BREACHED": "Password found in public breach records"
   }
 }

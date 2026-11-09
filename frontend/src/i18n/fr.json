@@ -1,5 +1,21 @@
 {
   "brand": "Flair",
+  "home": {
+    "eyebrow": "Votre réflexe anti-arnaque",
+    "title": "Flair vous aide à",
+    "titleHighlight": "repérer les pièges en ligne.",
+    "description": "Un lien douteux, un message inquiétant ou un mot de passe à vérifier ? Prenez un instant pour comprendre les risques avant d’agir.",
+    "cta": "Découvrir les outils",
+    "privacyNote": "Sans compte. Une vérification à la fois.",
+    "previewLabel": "Un doute avant de cliquer ?",
+    "previewTitle": "Prenez le temps de vérifier.",
+    "previewDescription": "Flair met en évidence des signaux utiles pour vous aider à décider quoi faire ensuite.",
+    "previewFootnote": "Vos décisions restent les vôtres.",
+    "toolsEyebrow": "Les outils Flair",
+    "toolsTitle": "Que souhaitez-vous vérifier ?",
+    "toolsDescription": "Choisissez un outil, renseignez son contenu, puis consultez les signaux détectés et leur explication.",
+    "formHint": "Outil sélectionné : {{tool}}"
+  },
   "header": {
     "language": "Langue",
     "themeToLight": "Passer au thème clair",
@@ -55,7 +71,21 @@
     "tactics": "Techniques possibles",
     "explanation": "Explication",
     "breachCount": "Correspondances dans des fuites connues : {{count}}",
-    "unknownReason": "Signal complémentaire ({{code}})",
+    "unknownReason": "Autre signal détecté",
+    "sourceOther": "Source complémentaire",
+    "sourcesList": {
+      "heuristics": "Règles de détection",
+      "zxcvbn": "Analyse de robustesse",
+      "hibp": "Base Have I Been Pwned",
+      "llm": "Analyse du texte par IA"
+    },
+    "sourceDetails": {
+      "heuristics": "Vérifications automatiques de caractéristiques courantes associées aux risques.",
+      "zxcvbn": "Estime la facilité avec laquelle un mot de passe peut être deviné.",
+      "hibp": "Recherche si le mot de passe apparaît dans des fuites publiques. Seuls les 5 premiers caractères de son empreinte SHA-1 sont transmis à ce service, jamais le mot de passe.",
+      "llm": "Aide à expliquer le contenu et les tactiques de manipulation possibles.",
+      "other": "Cette source a contribué à l’analyse."
+    },
     "verdict": {
       "safe": "Semble sûr",
       "suspicious": "Restez prudent",
@@ -68,6 +98,34 @@
     }
   },
   "reasons": {
-    "STUB_RESULT": "Résultat de démonstration pendant le développement de l’analyse."
+    "STUB_RESULT": "Résultat de démonstration pendant le développement de l’analyse.",
+    "MISSING_HTTPS": "Connexion non chiffrée",
+    "URL_USERINFO": "Identifiants intégrés à l’adresse",
+    "AT_IN_PATH": "Caractère pouvant masquer le vrai domaine",
+    "PUNYCODE_DOMAIN": "Domaine avec caractères ressemblants",
+    "TYPOSQUATTING": "Domaine ressemblant à une marque connue",
+    "SUSPICIOUS_TLD": "Extension de domaine inhabituelle",
+    "URL_SHORTENER": "Lien raccourci qui masque sa destination",
+    "MANY_SUBDOMAINS": "Nombre inhabituel de sous-domaines",
+    "IP_ADDRESS_HOST": "Adresse IP utilisée à la place d’un domaine",
+    "MALFORMED_URL": "Adresse web mal formée",
+    "UNSUPPORTED_URL_SCHEME": "Protocole web inhabituel",
+    "SUSPICIOUS_KEYWORD": "Termes souvent utilisés dans des liens trompeurs",
+    "LONG_URL": "Adresse web particulièrement longue",
+    "OPEN_REDIRECT_PARAM": "Redirection externe possible",
+    "EMAIL_URGENCY": "Ton pressant ou alarmiste",
+    "EMAIL_CREDENTIAL_REQUEST": "Demande d’identifiants ou de mot de passe",
+    "EMAIL_MONEY_REQUEST": "Demande d’argent ou de paiement",
+    "EMAIL_GIFT_CARD_REQUEST": "Demande de cartes-cadeaux",
+    "EMAIL_LINK_MISMATCH": "Le texte du lien ne correspond pas à sa destination",
+    "EMAIL_REPLY_TO_MISMATCH": "Adresse de réponse différente de l’expéditeur",
+    "EMAIL_AUTHENTICATION_FAILURE": "Vérifications d’authenticité non concluantes",
+    "EMAIL_BRAND_IMPERSONATION": "Imitation possible d’une marque connue",
+    "EMAIL_UNSOLICITED_SOLICITATION": "Proposition ou demande non sollicitée",
+    "EMAIL_FINANCIAL_INCENTIVE": "Récompense financière utilisée comme incitation",
+    "EMAIL_SENSITIVE_DATA_REQUEST": "Demande de données sensibles",
+    "PASSWORD_TOO_SHORT": "Mot de passe trop court",
+    "PASSWORD_WEAK": "Mot de passe facile à deviner",
+    "BREACHED": "Mot de passe trouvé dans des fuites publiques"
   }
 }
