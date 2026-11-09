@@ -9,7 +9,7 @@ class UrlAnalyzeRequest(BaseModel):
 
 
 class EmailAnalyzeRequest(BaseModel):
-    content: str
+    content: str = Field(min_length=1, max_length=50000)
     lang: Literal["fr", "en"]
 
 

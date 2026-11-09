@@ -29,7 +29,7 @@ def test_password_check_returns_analysis_without_password(
         "app.services.password_analysis_service.check_password_breach", no_breach
     )
     response = client.post(
-        "/api/password/check",
+        "/api/v1/password/check",
         json={"password": "do-not-return-this", "lang": "en"},
     )
 
@@ -53,7 +53,7 @@ def test_password_check_propagates_breach_status(
         found_breach,
     )
     response = client.post(
-        "/api/password/check",
+        "/api/v1/password/check",
         json={"password": "this-is-a-test-password", "lang": "en"},
     )
 
@@ -83,7 +83,7 @@ def test_password_check_returns_generic_error_when_hibp_is_unavailable(
         unavailable,
     )
     response = client.post(
-        "/api/password/check",
+        "/api/v1/password/check",
         json={"password": "do-not-return-this", "lang": "en"},
     )
 
@@ -98,7 +98,7 @@ def test_password_is_not_returned_or_logged_on_validation_error(
     secret = "private-password-" + ("x" * 130)
     with caplog.at_level(logging.INFO):
         response = client.post(
-            "/api/password/check",
+            "/api/v1/password/check",
             json={"password": secret, "lang": "en"},
         )
 
@@ -123,7 +123,7 @@ def test_strong_password_scores_safe(
     )
     # Mot de passe que zxcvbn note score=3 ou 4
     response = client.post(
-        "/api/password/check",
+        "/api/v1/password/check",
         json={"password": "Tr0ub4dor&3-correct-horse", "lang": "fr"},
     )
 
@@ -146,7 +146,7 @@ def test_breach_reason_detail_contains_count(
         "app.services.password_analysis_service.check_password_breach", found_breach
     )
     response = client.post(
-        "/api/password/check",
+        "/api/v1/password/check",
         json={"password": "some-password", "lang": "fr"},
     )
 
@@ -169,10 +169,10 @@ def test_reason_details_are_localized(
     )
     # Mot de passe trop court → raison PASSWORD_TOO_SHORT
     response_fr = client.post(
-        "/api/password/check", json={"password": "abc", "lang": "fr"}
+        "/api/v1/password/check", json={"password": "abc", "lang": "fr"}
     )
     response_en = client.post(
-        "/api/password/check", json={"password": "abc", "lang": "en"}
+        "/api/v1/password/check", json={"password": "abc", "lang": "en"}
     )
 
     detail_fr = response_fr.json()["result"]["reasons"][0]["detail"]

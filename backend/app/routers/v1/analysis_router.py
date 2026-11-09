@@ -12,7 +12,7 @@ from app.schemas.analysis_requests import (
 )
 from app.schemas.shared.api_base_response import ApiBaseResponse
 from app.services import ServiceResult
-from app.services.email_analysis_service import analyze_email
+from app.services.email_analysis_service import EmailAnalysisService
 from app.services.password_analysis_service import PasswordAnalysisService
 from app.services.url_analysis_service import UrlAnalysisService
 
@@ -21,6 +21,10 @@ router = APIRouter(tags=["analysis"])
 
 def get_url_analysis_service() -> UrlAnalysisService:
     return UrlAnalysisService()
+
+
+def get_email_analysis_service() -> EmailAnalysisService:
+    return EmailAnalysisService()
 
 
 def get_password_analysis_service() -> PasswordAnalysisService:
@@ -47,11 +51,16 @@ async def post_url_analysis(
 @limiter.limit("5/minute")
 async def post_email_analysis(
     request: Request,
-    data: EmailAnalyzeRequest, response: Response
+    data: EmailAnalyzeRequest,
+    response: Response,
+    service: Annotated[
+        EmailAnalysisService, Depends(get_email_analysis_service)
+    ],
 ) -> ApiBaseResponse[AnalysisResult, AppError]:
-    result: ServiceResult[AnalysisResult, AppError] = analyze_email()
+    result: ServiceResult[AnalysisResult, AppError] = await service.analyze(
+        data.content, lang=data.lang
+    )
     return result.to_HTTP_api_base_response(response)
-
 
 
 @router.post(
