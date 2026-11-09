@@ -9,6 +9,7 @@ import {
 import { AnalysisPage } from '@/components/AnalysisPage'
 import { BottomNav } from '@/components/BottomNav'
 import { Header } from '@/components/Header'
+import { LandingPage } from '@/components/LandingPage'
 import {
   Alert,
   AlertDescription,
@@ -27,9 +28,9 @@ function App() {
       <TooltipProvider>
         <div className="min-h-svh bg-background">
           <Header />
-          <main className="mx-auto grid w-full max-w-3xl gap-6 px-4 pb-32 pt-6 sm:pt-10 md:pb-10">
+          <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 pb-32 pt-6 sm:pt-10 md:pb-10">
             <Routes>
-              <Route path="/" element={<Navigate to="/url" replace />} />
+              <Route path="/" element={<LandingPage />} />
               <Route
                 path="/url"
                 element={<AnalysisPage key="url" kind="url" />}
@@ -42,7 +43,7 @@ function App() {
                 path="/password"
                 element={<AnalysisPage key="password" kind="password" />}
               />
-              <Route path="*" element={<Navigate to="/url" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
 
             <section className="grid gap-3">

@@ -26,7 +26,7 @@ export function Header() {
   const navigate = useNavigate()
   const activeTab = paths.includes(location.pathname)
     ? location.pathname.slice(1)
-    : 'url'
+    : ''
 
   useEffect(() => {
     document.documentElement.lang = i18n.resolvedLanguage?.startsWith('fr')
@@ -41,9 +41,9 @@ export function Header() {
 
   return (
     <header className="border-b border-border bg-background">
-      <div className="mx-auto flex h-16 w-full max-w-3xl items-center justify-between gap-3 px-4">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4">
         <Link
-          to="/url"
+          to="/"
           className="flex shrink-0 items-center gap-2 text-brand"
           aria-label={t('brand')}
         >

@@ -41,7 +41,7 @@ interface VerdictCardProps {
   result: AnalysisResult
 }
 
-export function VerdictCard({ result }: VerdictCardProps) {
+export function VerdictCard({ result }: Readonly<VerdictCardProps>) {
   const { t } = useTranslation()
   const styles = verdictStyles[result.verdict]
   const VerdictIcon = verdictIcons[result.verdict]
@@ -52,7 +52,7 @@ export function VerdictCard({ result }: VerdictCardProps) {
       data-verdict={result.verdict}
       aria-labelledby="result-title"
     >
-      <CardHeader className="gap-4 p-5 sm:p-6">
+      <CardHeader className="grid-cols-1 gap-4 p-5 sm:p-6">
         <div className="flex min-w-0 items-start gap-3">
           <VerdictIcon
             aria-hidden="true"
@@ -79,28 +79,26 @@ export function VerdictCard({ result }: VerdictCardProps) {
         </div>
       </CardHeader>
 
-      <CardContent className="grid min-w-0 gap-5 p-5 pt-0 sm:p-6 sm:pt-0">
+      <CardContent className="grid min-w-0 grid-cols-1 gap-5 p-5 pt-0 sm:p-6 sm:pt-0">
         {result.reasons.length > 0 && (
-          <section className="grid gap-3" aria-labelledby="reasons-title">
+          <section className="grid min-w-0 grid-cols-1 gap-3" aria-labelledby="reasons-title">
             <h3 id="reasons-title" className="font-semibold">
               {t('result.reasons')}
             </h3>
-            <ul className="grid gap-3">
+            <ul className="grid min-w-0 grid-cols-1 gap-3">
               {result.reasons.map((reason, index) => (
                 <li
                   key={`${reason.code}-${index}`}
                   className="flex min-w-0 flex-wrap items-start justify-between gap-2"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="break-words [overflow-wrap:anywhere] text-sm">
+                    <p className="wrap-anywhere text-sm font-medium">
                       {t(`reasons.${reason.code}`, {
-                        defaultValue: t('result.unknownReason', {
-                          code: reason.code,
-                        }),
+                        defaultValue: t('result.unknownReason'),
                       })}
                     </p>
                     {reason.detail && (
-                      <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm text-muted-foreground">
+                      <p className="mt-1 wrap-anywhere text-sm text-muted-foreground">
                         {reason.detail}
                       </p>
                     )}
@@ -115,39 +113,57 @@ export function VerdictCard({ result }: VerdictCardProps) {
         )}
 
         {result.tactics && result.tactics.length > 0 && (
-          <section className="grid gap-2">
+          <section className="grid min-w-0 grid-cols-1 gap-2">
             <h3 className="font-semibold">{t('result.tactics')}</h3>
-            <ul className="list-inside list-disc break-words text-sm text-muted-foreground">
+            <ul className="grid min-w-0 grid-cols-1 list-inside list-disc gap-1 wrap-break-word text-sm text-muted-foreground">
               {result.tactics.map((tactic) => (
-                <li key={tactic}>{tactic}</li>
+                <li
+                  key={tactic}
+                  className="min-w-0 wrap-anywhere"
+                >
+                  {tactic}
+                </li>
               ))}
             </ul>
           </section>
         )}
 
         {result.explanation && (
-          <section className="grid gap-2">
+          <section className="grid min-w-0 grid-cols-1 gap-2">
             <h3 className="font-semibold">{t('result.explanation')}</h3>
-            <p className="break-words [overflow-wrap:anywhere] text-sm text-muted-foreground">
+            <p className="w-full min-w-0 wrap-anywhere text-sm text-muted-foreground">
               {result.explanation}
             </p>
           </section>
         )}
 
         {result.breach_count !== undefined && (
-          <p className="text-sm font-medium">
+          <p className="min-w-0 text-sm font-medium wrap-anywhere">
             {t('result.breachCount', { count: result.breach_count })}
           </p>
         )}
 
-        <section className="grid gap-2">
+        <section className="grid min-w-0 grid-cols-1 gap-2">
           <h3 className="font-semibold">{t('result.sources')}</h3>
-          <ul className="flex flex-wrap gap-2">
-            {result.sources.map((source) => (
-              <li key={source}>
-                <Badge variant="outline" className={styles.text}>
-                  {source}
+          <ul className="grid min-w-0 grid-cols-1 gap-4">
+            {result.sources.map((source, index) => (
+              <li
+                key={`${source}-${index}`}
+                className="grid min-w-0 justify-items-start gap-1"
+              >
+                <Badge
+                  variant="outline"
+                  className={`max-w-full whitespace-normal wrap-break-word ${styles.text}`}
+                >
+                  {t(`result.sourcesList.${source}`, {
+                    defaultValue: t('result.sourceOther'),
+                  })}
                 </Badge>
+                <span className="w-full min-w-0 wrap-break-word text-md text-muted-foreground">
+                  {t(`result.sourceDetails.${source}`, {
+                    defaultValue: t('result.sourceDetails.other'),
+                  })}
+                </span>
               </li>
             ))}
           </ul>
