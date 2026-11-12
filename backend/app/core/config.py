@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     )
     GEMINI_API_KEY: str
     GEMINI_MODEL: str
+    METRICS_TOKEN: str
 
     model_config = SettingsConfigDict(
         env_file=".env",

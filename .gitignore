@@ -164,6 +164,7 @@ celerybeat.pid
 # Environments
 .env
 !.env.example
+.metrics_token
 .venv/
 env/
 venv/

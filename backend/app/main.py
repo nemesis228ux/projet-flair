@@ -1,7 +1,9 @@
 import uvicorn
+import secrets
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from prometheus_fastapi_instrumentator import Instrumentator
 from slowapi.errors import RateLimitExceeded
 
 from app.common.business_error import AppError, AppErrorType
@@ -22,6 +24,22 @@ app = FastAPI(
 app.state.limiter = limiter
 setup_app_cors(app)
 app.include_router(public_api_router)
+Instrumentator(
+    excluded_handlers=["/metrics"],
+).instrument(app).expose(app, include_in_schema=False)
+
+
+@app.middleware("http")
+async def protect_metrics(request: Request, call_next):
+    if request.url.path == "/metrics":
+        authorization = request.headers.get("authorization", "")
+        expected = f"Bearer {settings.METRICS_TOKEN}"
+        if not secrets.compare_digest(authorization, expected):
+            return JSONResponse(
+                status_code=401,
+                content={"detail": "Metrics authentication required"},
+            )
+    return await call_next(request)
 
 
 @app.exception_handler(RequestValidationError)

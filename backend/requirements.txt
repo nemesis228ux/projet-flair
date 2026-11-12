@@ -8,3 +8,4 @@ mypy                       # Static type checking
 rapidfuzz                  # Fast fuzzy matching for URL brand-impersonation heuristics
 slowapi                    # Rate limiting for public analysis endpoints
 zxcvbn                     # Local password-strength estimation
+prometheus-fastapi-instrumentator  # Prometheus HTTP metrics for FastAPI
