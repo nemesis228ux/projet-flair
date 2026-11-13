@@ -64,6 +64,8 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+!frontend/src/lib/
+!frontend/src/lib/**
 MANIFEST
 
 # PyInstaller
@@ -164,6 +166,7 @@ celerybeat.pid
 # Environments
 .env
 !.env.example
+.metrics_token
 .venv/
 env/
 venv/
