@@ -4,21 +4,42 @@ from dataclasses import dataclass
 from urllib.parse import ParseResult, parse_qs, unquote, urlsplit
 
 from rapidfuzz import fuzz
+from rapidfuzz.distance import DamerauLevenshtein
 
 from app.schemas.analysis import Severity
 
 _BRANDS = (
     "amazon",
     "apple",
+    "airtel",
+    "coris",
     "dropbox",
+    "ecobank",
     "facebook",
+    "free",
     "google",
     "instagram",
     "linkedin",
     "microsoft",
+    "mixx",
+    "moov",
+    "mtn",
     "netflix",
+    "orange",
     "paypal",
+    "safaricom",
+    "sonatel",
+    "telecel",
+    "tigo",
+    "togocom",
+    "uba",
+    "vodacom",
     "whatsapp",
+    "wave",
+    "yas",
+    "mpesa",
+    "tmoney",
+    "flooz",
 )
 _SHORTENERS = {
     "bit.ly",
@@ -71,6 +92,23 @@ _OPEN_REDIRECT_PARAMS = {
     "goto", "return", "returnto", "return_url", "target", "dest",
     "destination", "forward", "link", "ref",
 }
+_TRACKING_PARAMS = {
+    "_gl",
+    "_hsenc",
+    "_hsmi",
+    "_t",
+    "fbclid",
+    "gclid",
+    "mc_cid",
+    "mc_eid",
+    "msclkid",
+    "trk",
+    "utm_campaign",
+    "utm_medium",
+    "utm_source",
+}
+_OPAQUE_PATH_TOKEN = re.compile(r"^[A-Za-z0-9]{10,}$")
+_TIMESTAMP_PARAM = re.compile(r"^_t\d{8,}$")
 
 
 @dataclass(frozen=True)
@@ -100,7 +138,13 @@ def _is_typosquatting(domain_label: str) -> bool:
             if candidate == brand:
                 continue
             normalized = candidate.translate(_DIGIT_SUBSTITUTIONS)
-            if fuzz.ratio(normalized, brand) >= 86:
+            is_close_match = fuzz.ratio(normalized, brand) >= 86
+            is_transposed_match = (
+                len(brand) >= 4
+                and len(normalized) == len(brand)
+                and DamerauLevenshtein.distance(normalized, brand) == 1
+            )
+            if is_close_match or is_transposed_match:
                 return True
     return False
 
@@ -189,7 +233,34 @@ def _inspect_query(query: str) -> list[UrlRiskSignal]:
         if param_name.lower() in _OPEN_REDIRECT_PARAMS:
             signals.append(_signal("OPEN_REDIRECT_PARAM", Severity.MEDIUM, 20, detail=param_name))
             break  
+    if any(
+        param_name.lower() in _TRACKING_PARAMS
+        or _TIMESTAMP_PARAM.fullmatch(param_name.lower())
+        for param_name in params
+    ):
+        signals.append(_signal("TRACKING_PARAMETER", Severity.LOW, 5))
     return signals
+
+
+def _inspect_path(path: str) -> list[UrlRiskSignal]:
+    segments = [segment for segment in path.split("/") if segment]
+    opaque_segments = [
+        segment
+        for segment in segments
+        if _OPAQUE_PATH_TOKEN.fullmatch(segment)
+        and any(character.isalpha() for character in segment)
+        and any(character.isdigit() for character in segment)
+    ]
+    if len(opaque_segments) >= 1:
+        return [
+            _signal(
+                "OPAQUE_PATH_TOKEN",
+                Severity.MEDIUM,
+                18,
+                detail=str(len(opaque_segments)),
+            )
+        ]
+    return []
 
 
 def inspect_url(url: str) -> list[UrlRiskSignal]:
@@ -205,6 +276,7 @@ def inspect_url(url: str) -> list[UrlRiskSignal]:
         return [_signal("MALFORMED_URL", Severity.HIGH, 40)]
 
     signals = _inspect_host(parsed.hostname, parsed)
+    signals.extend(_inspect_path(parsed.path))
     signals.extend(_inspect_query(parsed.query))
 
     inspected_text = unquote(f"{parsed.hostname}{parsed.path}").lower()

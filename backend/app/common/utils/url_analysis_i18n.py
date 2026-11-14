@@ -137,6 +137,28 @@ _MESSAGES: dict[str, dict[str, str]] = {
             "to a malicious external URL."
         ),
     },
+    "TRACKING_PARAMETER": {
+        "fr": (
+            "L'URL contient un paramètre de suivi publicitaire ou de campagne, "
+            "ce qui peut accompagner un lien de redirection ou de sollicitation."
+        ),
+        "en": (
+            "The URL contains an advertising or campaign tracking parameter, "
+            "which can accompany a redirect or unsolicited link."
+        ),
+    },
+    "OPAQUE_PATH_TOKEN": {
+        "fr": (
+            "Le chemin contient {detail} jeton(s) alphanumérique(s) opaque(s), "
+            "difficiles à interpréter et souvent utilisés dans des liens temporaires "
+            "ou des campagnes de hameçonnage."
+        ),
+        "en": (
+            "The path contains {detail} opaque alphanumeric token(s), "
+            "which are difficult to interpret and commonly used in temporary "
+            "or phishing campaigns."
+        ),
+    },
 }
 
 _FALLBACK_LANG = "fr"
