@@ -7,7 +7,6 @@ import {
   Mail,
   ScanSearch,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,7 +30,6 @@ export function LandingPage() {
       <section className="grid items-center gap-10 py-8 sm:py-14 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="grid justify-items-start gap-6">
           <div className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium text-muted-foreground">
-            <Sparkles aria-hidden="true" className="size-4 text-brand" />
             {t("home.eyebrow")}
           </div>
           <h1 className="max-w-3xl text-4xl leading-[1.08] font-bold tracking-tight sm:text-6xl">
@@ -85,7 +83,6 @@ export function LandingPage() {
               ))}
             </div>
             <div className="flex items-center gap-2 border-t border-border pt-4 text-sm text-muted-foreground">
-              <ShieldCheck aria-hidden="true" className="size-4 text-brand" />
               {t("home.previewFootnote")}
             </div>
           </div>

@@ -48,8 +48,8 @@ function App() {
 
             <section className="grid gap-3">
               <Alert>
-                <AlertTriangle aria-hidden="true" />
-                <AlertTitle>{t('common.sensitiveNoticeTitle')}</AlertTitle>
+                <AlertTriangle color='red' aria-hidden="true" />
+                <AlertTitle className='text-red-500'>{t('common.sensitiveNoticeTitle')}</AlertTitle>
                 <AlertDescription>
                   {t('common.sensitiveNotice')}
                 </AlertDescription>

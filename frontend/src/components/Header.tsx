@@ -1,4 +1,4 @@
-import { Languages, Moon, ScanSearch, Sun } from 'lucide-react'
+import { Languages, Moon, Sun } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -17,14 +17,14 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-const paths = ['/url', '/email', '/password']
+const paths = new Set(['/url', '/email', '/password'])
 
 export function Header() {
   const { t, i18n } = useTranslation()
   const { theme, toggleTheme } = useTheme()
   const location = useLocation()
   const navigate = useNavigate()
-  const activeTab = paths.includes(location.pathname)
+  const activeTab = paths.has(location.pathname)
     ? location.pathname.slice(1)
     : ''
 
@@ -47,14 +47,13 @@ export function Header() {
           className="flex shrink-0 items-center gap-2 text-brand"
           aria-label={t('brand')}
         >
-          <ScanSearch aria-hidden="true" className="size-5" />
-          <span className="text-xl font-bold tracking-tight">{t('brand')}</span>
+          <span className="text-3xl font-bold tracking-tight">{t('brand')}</span>
         </Link>
 
         <nav className="hidden md:block" aria-label={t('navigation.main')}>
           <Tabs
             value={activeTab}
-            onValueChange={(value) => navigate(`/${value}`)}
+            onValueChange={(value: any) => navigate(`/${value}`)}
           >
             <TabsList className="h-11">
               <TabsTrigger value="url" className="min-h-11 px-4">

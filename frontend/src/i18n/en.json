@@ -113,6 +113,8 @@
     "SUSPICIOUS_KEYWORD": "Terms often used in deceptive links",
     "LONG_URL": "Unusually long web address",
     "OPEN_REDIRECT_PARAM": "Possible external redirect",
+    "TRACKING_PARAMETER": "Tracking parameter in the link",
+    "OPAQUE_PATH_TOKEN": "Opaque token in the link path",
     "EMAIL_URGENCY": "Pressuring or alarming tone",
     "EMAIL_CREDENTIAL_REQUEST": "Request for login details or password",
     "EMAIL_MONEY_REQUEST": "Request for money or payment",
