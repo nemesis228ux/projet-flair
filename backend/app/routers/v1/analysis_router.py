@@ -39,7 +39,7 @@ async def post_url_analysis(
     response: Response,
     service: Annotated[UrlAnalysisService, Depends(get_url_analysis_service)],
 ) -> ApiBaseResponse[AnalysisResult, AppError]:
-    result: ServiceResult[AnalysisResult, AppError] = service.analyze(
+    result: ServiceResult[AnalysisResult, AppError] = await service.analyze(
         payload.url, lang=payload.lang
     )
     return result.to_HTTP_api_base_response(response)

@@ -9,3 +9,5 @@ rapidfuzz                  # Fast fuzzy matching for URL brand-impersonation heu
 slowapi                    # Rate limiting for public analysis endpoints
 zxcvbn                     # Local password-strength estimation
 prometheus-fastapi-instrumentator  # Prometheus HTTP metrics for FastAPI
+publicsuffix2               # Public Suffix List for registrable-domain boundaries
+cachetools                  # TTL metadata cache

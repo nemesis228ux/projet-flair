@@ -77,13 +77,17 @@
       "heuristics": "Règles de détection",
       "zxcvbn": "Analyse de robustesse",
       "hibp": "Base Have I Been Pwned",
-      "llm": "Analyse du texte par IA"
+      "llm": "Analyse du texte par IA",
+      "rdap": "Informations RDAP du domaine",
+      "dns": "Résolution DNS du domaine"
     },
     "sourceDetails": {
       "heuristics": "Vérifications automatiques de caractéristiques courantes associées aux risques.",
       "zxcvbn": "Estime la facilité avec laquelle un mot de passe peut être deviné.",
       "hibp": "Recherche si le mot de passe apparaît dans des fuites publiques. Seuls les 5 premiers caractères de son empreinte SHA-1 sont transmis à ce service, jamais le mot de passe.",
       "llm": "Aide à expliquer le contenu et les tactiques de manipulation possibles.",
+      "rdap": "Vérifie les données publiques d'enregistrement du domaine.",
+      "dns": "Vérifie si le domaine résout vers une adresse publique ou confirme qu'il ne résout pas.",
       "other": "Cette source a contribué à l’analyse."
     },
     "verdict": {
@@ -118,6 +122,9 @@
     "RANDOMIZED_DOMAIN": "Nom de domaine généré ou aléatoire",
     "TEMPORARY_PAGE_PATH": "Page temporaire ou générée dynamiquement",
     "CAMPAIGN_TRACKING_VALUE": "Valeur numérique de suivi de campagne",
+    "DOMAIN_TOO_NEW": "Domaine enregistré très récemment",
+    "DOMAIN_RECENT": "Domaine enregistré depuis moins d'un an",
+    "DNS_UNRESOLVED": "Domaine sans résolution DNS active",
     "EMAIL_URGENCY": "Ton pressant ou alarmiste",
     "EMAIL_CREDENTIAL_REQUEST": "Demande d’identifiants ou de mot de passe",
     "EMAIL_MONEY_REQUEST": "Demande d’argent ou de paiement",
