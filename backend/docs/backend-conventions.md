@@ -23,7 +23,7 @@ The example router constructs a service success result directly. The example use
 ## URL analysis
 
 - `UrlAnalysisService` is a FastAPI-injected service class. Its `analyze(url)` method uses the pure `inspect_url()` helper in `app/common/utils/url_analysis.py`, then maps the signals into the shared `AnalysisResult` and `ServiceResult` types.
-- The V1 URL analyzer only inspects the submitted string. It does not resolve DNS, fetch the URL, or call external APIs. It reports stable reason codes for malformed URLs, unsupported schemes, missing HTTPS, URL user-info, IP hosts, punycode, brand-like typosquatting, selected suspicious TLDs, known URL shorteners, many subdomains, suspicious keywords, long URLs, tracking parameters, open redirects, and opaque alphanumeric path tokens.
+- The V1 URL analyzer only inspects the submitted string. It does not resolve DNS, fetch the URL, or call external APIs. It reports stable reason codes for malformed URLs, unsupported schemes, missing HTTPS, URL user-info, IP hosts, punycode, brand-like typosquatting, selected suspicious TLDs, known URL shorteners, many subdomains, suspicious keywords, long URLs, tracking parameters, open redirects, opaque alphanumeric path tokens, randomized domains, temporary page paths, and campaign tracking values.
 - Risk points are added and capped at 100. Scores below 20 are `safe`, 20–59 are `suspicious`, and 60 or above are `dangerous`. The current result source is `heuristics`.
 - The request schema limits URL input to 1–2048 characters. Domain-age checks and external reputation services are not implemented yet.
 

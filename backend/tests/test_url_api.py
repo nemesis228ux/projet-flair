@@ -57,8 +57,8 @@ def test_url_analysis_reports_opaque_campaign_tokens() -> None:
 
     assert response.status_code == 200
     result = response.json()["result"]
-    assert result["verdict"] == "suspicious"
-    assert result["score"] >= 20
+    assert result["verdict"] == "dangerous"
+    assert result["score"] >= 60
     assert {reason["code"] for reason in result["reasons"]} >= {
         "OPAQUE_PATH_TOKEN",
         "TRACKING_PARAMETER",
@@ -79,8 +79,8 @@ def test_url_analysis_reports_wave_typosquatting() -> None:
 
     assert response.status_code == 200
     result = response.json()["result"]
-    assert result["verdict"] == "suspicious"
-    assert result["score"] >= 50
+    assert result["verdict"] == "dangerous"
+    assert result["score"] >= 60
     assert "TYPOSQUATTING" in {
         reason["code"] for reason in result["reasons"]
     }
@@ -94,6 +94,32 @@ def test_url_analysis_reports_african_brand_typosquatting() -> None:
     ):
         result_codes = {signal.code for signal in inspect_url(url)}
         assert "TYPOSQUATTING" in result_codes
+
+
+def test_url_analysis_reports_campaign_and_temporary_links() -> None:
+    urls = (
+        (
+            "https://earumora-kuytbe.xyz/CDMNBVCXZLKJCD.html"
+            "?pid=r_917624934242571"
+        ),
+        "https://pdd.tg.999yes.xyz/tg/?guid=1007326&key=friend",
+        (
+            "https://earndfre-cduwbd.xyz/TGMNBVCXZLKJTG.html"
+            "?pid=r_917647150626626"
+        ),
+        "https://casajoys.com/cdc60ak",
+        "https://wljra.buzz/UaviraNZvR/gh-fr?1221970658904224237&s=wa&",
+    )
+
+    for url in urls:
+        signals = inspect_url(url)
+        score = sum(signal.points for signal in signals)
+        codes = {signal.code for signal in signals}
+
+        assert score >= 20, (url, score, codes)
+        assert "TEMPORARY_PAGE_PATH" in codes or "OPAQUE_PATH_TOKEN" in codes or (
+            "RANDOMIZED_DOMAIN" in codes
+        ) or "SUSPICIOUS_TLD" in codes or "CAMPAIGN_TRACKING_VALUE" in codes
 
 
 def test_url_analysis_validates_input_length() -> None:

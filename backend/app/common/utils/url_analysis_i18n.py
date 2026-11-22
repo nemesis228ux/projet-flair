@@ -159,6 +159,36 @@ _MESSAGES: dict[str, dict[str, str]] = {
             "or phishing campaigns."
         ),
     },
+    "RANDOMIZED_DOMAIN": {
+        "fr": (
+            "Le nom de domaine '{detail}' semble généré ou fortement aléatoire, "
+            "ce qui est courant dans certaines campagnes frauduleuses temporaires."
+        ),
+        "en": (
+            "The domain name '{detail}' appears generated or highly randomized, "
+            "which is common in temporary fraud campaigns."
+        ),
+    },
+    "TEMPORARY_PAGE_PATH": {
+        "fr": (
+            "Le lien pointe vers une page temporaire ou générée dynamiquement "
+            "avec une extension inhabituelle pour une destination fiable."
+        ),
+        "en": (
+            "The link points to a temporary or dynamically generated page "
+            "using a structure associated with unreliable destinations."
+        ),
+    },
+    "CAMPAIGN_TRACKING_VALUE": {
+        "fr": (
+            "L'URL contient une valeur numérique de suivi typique des campagnes "
+            "de tracking ou d'affiliation."
+        ),
+        "en": (
+            "The URL contains a numeric tracking value typical of affiliate "
+            "or campaign tracking."
+        ),
+    },
 }
 
 _FALLBACK_LANG = "fr"
