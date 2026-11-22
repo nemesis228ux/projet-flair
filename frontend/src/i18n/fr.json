@@ -77,13 +77,17 @@
       "heuristics": "Règles de détection",
       "zxcvbn": "Analyse de robustesse",
       "hibp": "Base Have I Been Pwned",
-      "llm": "Analyse du texte par IA"
+      "llm": "Analyse du texte par IA",
+      "rdap": "Informations RDAP du domaine",
+      "dns": "Résolution DNS du domaine"
     },
     "sourceDetails": {
       "heuristics": "Vérifications automatiques de caractéristiques courantes associées aux risques.",
       "zxcvbn": "Estime la facilité avec laquelle un mot de passe peut être deviné.",
       "hibp": "Recherche si le mot de passe apparaît dans des fuites publiques. Seuls les 5 premiers caractères de son empreinte SHA-1 sont transmis à ce service, jamais le mot de passe.",
       "llm": "Aide à expliquer le contenu et les tactiques de manipulation possibles.",
+      "rdap": "Vérifie les données publiques d'enregistrement du domaine.",
+      "dns": "Vérifie si le domaine résout vers une adresse publique ou confirme qu'il ne résout pas.",
       "other": "Cette source a contribué à l’analyse."
     },
     "verdict": {

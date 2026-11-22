@@ -73,7 +73,10 @@ class UrlAnalysisService:
                 signals.extend(self._metadata_signals(metadata))
                 if metadata.rdap_available:
                     sources.append("rdap")
-                if metadata.dns_status == "available":
+                if metadata.dns_status in {
+                    "available",
+                    "confirmed_negative",
+                }:
                     sources.append("dns")
 
         score = min(sum(signal.points for signal in signals), 100)

@@ -77,13 +77,17 @@
       "heuristics": "Detection rules",
       "zxcvbn": "Password strength check",
       "hibp": "Have I Been Pwned database",
-      "llm": "AI text analysis"
+      "llm": "AI text analysis",
+      "rdap": "Domain RDAP information",
+      "dns": "Domain DNS resolution"
     },
     "sourceDetails": {
       "heuristics": "Automated checks for common characteristics associated with risk.",
       "zxcvbn": "Estimates how easily a password could be guessed.",
       "hibp": "Checks whether the password appears in public breach records. Only the first 5 characters of its SHA-1 fingerprint are sent to this service, never the password itself.",
       "llm": "Helps explain the content and possible manipulation tactics.",
+      "rdap": "Checks public registration data for the domain.",
+      "dns": "Checks whether the domain resolves to a public address or confirms it does not resolve.",
       "other": "This source contributed to the analysis."
     },
     "verdict": {
