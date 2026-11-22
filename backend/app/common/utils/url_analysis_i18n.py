@@ -213,6 +213,22 @@ _MESSAGES: dict[str, dict[str, str]] = {
         "fr": "Le domaine ne résout pas actuellement vers une adresse publique.",
         "en": "The domain does not currently resolve to a public address.",
     },
+    "GOOGLE_SAFE_BROWSING_MATCH": {
+        "fr": "Google Safe Browsing a associé cette URL à une menace connue.",
+        "en": "Google Safe Browsing associated this URL with a known threat.",
+    },
+    "URLHAUS_MATCH": {
+        "fr": "URLhaus a identifié cette URL comme liée à un programme malveillant.",
+        "en": "URLhaus identified this URL as associated with malware.",
+    },
+    "VIRUSTOTAL_MALICIOUS": {
+        "fr": "Plusieurs moteurs VirusTotal ont marqué cette URL comme malveillante.",
+        "en": "Multiple VirusTotal engines marked this URL as malicious.",
+    },
+    "VIRUSTOTAL_SUSPICIOUS": {
+        "fr": "Des moteurs VirusTotal ont marqué cette URL comme suspecte.",
+        "en": "VirusTotal engines marked this URL as suspicious.",
+    },
 }
 
 _FALLBACK_LANG = "fr"

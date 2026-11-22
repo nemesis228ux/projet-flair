@@ -79,7 +79,10 @@
       "hibp": "Base Have I Been Pwned",
       "llm": "Analyse du texte par IA",
       "rdap": "Informations RDAP du domaine",
-      "dns": "Résolution DNS du domaine"
+      "dns": "Résolution DNS du domaine",
+      "google_safe_browsing": "Google Safe Browsing",
+      "urlhaus": "URLhaus",
+      "virustotal": "VirusTotal"
     },
     "sourceDetails": {
       "heuristics": "Vérifications automatiques de caractéristiques courantes associées aux risques.",
@@ -88,6 +91,9 @@
       "llm": "Aide à expliquer le contenu et les tactiques de manipulation possibles.",
       "rdap": "Vérifie les données publiques d'enregistrement du domaine.",
       "dns": "Vérifie si le domaine résout vers une adresse publique ou confirme qu'il ne résout pas.",
+      "google_safe_browsing": "Recherche la présence de la URL dans les listes Google de menaces.",
+      "urlhaus": "Recherche les URLs associées à des logiciels malveillants.",
+      "virustotal": "Compare la URL avec les analyses d'antivirus et de services de sécurité.",
       "other": "Cette source a contribué à l’analyse."
     },
     "verdict": {
@@ -125,6 +131,10 @@
     "DOMAIN_TOO_NEW": "Domaine enregistré très récemment",
     "DOMAIN_RECENT": "Domaine enregistré depuis moins d'un an",
     "DNS_UNRESOLVED": "Domaine sans résolution DNS active",
+    "GOOGLE_SAFE_BROWSING_MATCH": "Menace connue selon Google Safe Browsing",
+    "URLHAUS_MATCH": "URL liée à un logiciel malveillant selon URLhaus",
+    "VIRUSTOTAL_MALICIOUS": "URL détectée comme malveillante par VirusTotal",
+    "VIRUSTOTAL_SUSPICIOUS": "URL détectée comme suspecte par VirusTotal",
     "EMAIL_URGENCY": "Ton pressant ou alarmiste",
     "EMAIL_CREDENTIAL_REQUEST": "Demande d’identifiants ou de mot de passe",
     "EMAIL_MONEY_REQUEST": "Demande d’argent ou de paiement",
