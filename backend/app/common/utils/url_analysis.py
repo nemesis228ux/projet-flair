@@ -1,4 +1,5 @@
 import ipaddress
+import math
 import re
 from dataclasses import dataclass
 from urllib.parse import ParseResult, parse_qs, unquote, urlsplit
@@ -68,6 +69,7 @@ _SUSPICIOUS_TLDS = {
     "tk",
     "top",
     "work",
+    "buzz",
     "xyz",
     "zip",
 }
@@ -106,9 +108,22 @@ _TRACKING_PARAMS = {
     "utm_campaign",
     "utm_medium",
     "utm_source",
+    "pid",
+    "guid",
+    "key",
+    "sid",
+    "s",
+    "campaign",
+    "ref",
+    "partner",
 }
-_OPAQUE_PATH_TOKEN = re.compile(r"^[A-Za-z0-9]{10,}$")
+_OPAQUE_PATH_TOKEN = re.compile(r"^[A-Za-z0-9]{7,}$")
 _TIMESTAMP_PARAM = re.compile(r"^_t\d{8,}$")
+_TEMPORARY_PAGE_PATH = re.compile(
+    r"\.(?:html?|php|aspx?|jsp)(?:$|[/?])",
+    re.IGNORECASE,
+)
+_NUMERIC_TRACKING_VALUE = re.compile(r"^\d{12,}$")
 
 
 @dataclass(frozen=True)
@@ -129,6 +144,35 @@ def _domain_label(host: str) -> str:
     if suffix in _COMPOUND_SUFFIXES and len(labels) >= 3:
         return labels[-3]
     return labels[-2] if len(labels) >= 2 else labels[0]
+
+
+def _shannon_entropy(value: str) -> float:
+    if not value:
+        return 0.0
+    counts = {character: value.count(character) for character in set(value)}
+    length = len(value)
+    return -sum(
+        (count / length) * math.log2(count / length)
+        for count in counts.values()
+    )
+
+
+def _is_randomized_domain(domain_label: str) -> bool:
+    normalized = re.sub(r"[^a-z0-9-]", "", domain_label.lower())
+    if not normalized:
+        return False
+
+    parts = [part for part in normalized.split("-") if part]
+    if len(normalized) >= 14 and len(parts) >= 2:
+        return True
+    if len(normalized) >= 12 and _shannon_entropy(normalized) >= 3.2:
+        return True
+    if len(normalized) >= 6:
+        digit_count = sum(character.isdigit() for character in normalized)
+        letter_count = sum(character.isalpha() for character in normalized)
+        if digit_count >= 2 and digit_count / (digit_count + letter_count) >= 0.25:
+            return True
+    return False
 
 
 def _is_typosquatting(domain_label: str) -> bool:
@@ -182,6 +226,15 @@ def _inspect_domain(host_ascii: str) -> list[UrlRiskSignal]:
         signals.append(_signal("PUNYCODE_DOMAIN", Severity.MEDIUM, 25))
     if _is_typosquatting(_domain_label(host_ascii)):
         signals.append(_signal("TYPOSQUATTING", Severity.HIGH, 35))
+    if _is_randomized_domain(_domain_label(host_ascii)):
+        signals.append(
+            _signal(
+                "RANDOMIZED_DOMAIN",
+                Severity.MEDIUM,
+                20,
+                detail=_domain_label(host_ascii),
+            )
+        )
     if labels[-1] in _SUSPICIOUS_TLDS:
         signals.append(_signal("SUSPICIOUS_TLD", Severity.MEDIUM, 15, detail=labels[-1]))
     registrable = ".".join(labels[-2:]) if len(labels) >= 2 else host_ascii
@@ -239,28 +292,45 @@ def _inspect_query(query: str) -> list[UrlRiskSignal]:
         for param_name in params
     ):
         signals.append(_signal("TRACKING_PARAMETER", Severity.LOW, 5))
+    if any(
+        _NUMERIC_TRACKING_VALUE.fullmatch(value)
+        for values in params.values()
+        for value in values
+    ) or any(
+        _NUMERIC_TRACKING_VALUE.fullmatch(param_name)
+        for param_name in params
+    ):
+        signals.append(_signal("CAMPAIGN_TRACKING_VALUE", Severity.MEDIUM, 12))
     return signals
 
 
 def _inspect_path(path: str) -> list[UrlRiskSignal]:
     segments = [segment for segment in path.split("/") if segment]
+    signals: list[UrlRiskSignal] = []
+    if _TEMPORARY_PAGE_PATH.search(path):
+        signals.append(
+            _signal("TEMPORARY_PAGE_PATH", Severity.MEDIUM, 16, detail=path)
+        )
     opaque_segments = [
         segment
         for segment in segments
         if _OPAQUE_PATH_TOKEN.fullmatch(segment)
         and any(character.isalpha() for character in segment)
-        and any(character.isdigit() for character in segment)
+        and (
+            any(character.isdigit() for character in segment)
+            or any(character.isupper() for character in segment)
+        )
     ]
     if len(opaque_segments) >= 1:
-        return [
+        signals.append(
             _signal(
                 "OPAQUE_PATH_TOKEN",
                 Severity.MEDIUM,
-                18,
+                20,
                 detail=str(len(opaque_segments)),
             )
-        ]
-    return []
+        )
+    return signals
 
 
 def inspect_url(url: str) -> list[UrlRiskSignal]:
