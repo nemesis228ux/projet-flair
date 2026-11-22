@@ -297,7 +297,7 @@ def test_rdap_unavailable_does_not_follow_redirect_or_submitted_path(
             return FakeResponse()
 
     async def fake_get_valid_base_urls(_domain: str) -> tuple[str, ...]:
-        return ()
+        return ("https://rdap.example/rdap",)
 
     async def fake_validate_base_url(_base_url: str) -> bool:
         return True
