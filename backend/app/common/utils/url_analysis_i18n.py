@@ -213,16 +213,6 @@ _MESSAGES: dict[str, dict[str, str]] = {
         "fr": "Le domaine ne résout pas actuellement vers une adresse publique.",
         "en": "The domain does not currently resolve to a public address.",
     },
-    "NEW_TLS_CERTIFICATE": {
-        "fr": (
-            "Le certificat TLS est récent ({detail} jour(s)), "
-            "ce qui peut accompagner une campagne temporaire."
-        ),
-        "en": (
-            "The TLS certificate is recent ({detail} day(s)), "
-            "which can accompany a temporary campaign."
-        ),
-    },
 }
 
 _FALLBACK_LANG = "fr"

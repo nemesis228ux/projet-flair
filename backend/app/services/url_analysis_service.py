@@ -53,28 +53,10 @@ class UrlAnalysisService:
                     _signal("DOMAIN_RECENT", Severity.LOW, 10, str(age_days))
                 )
 
-        if not metadata.dns_available:
+        if metadata.dns_status == "confirmed_negative":
             signals.append(
                 _signal("DNS_UNRESOLVED", Severity.HIGH, 30)
             )
-
-        if metadata.certificate_not_before is not None:
-            certificate_date = metadata.certificate_not_before
-            if certificate_date.tzinfo is None:
-                certificate_date = certificate_date.replace(tzinfo=timezone.utc)
-            certificate_age_days = max(
-                0,
-                (now - certificate_date.astimezone(timezone.utc)).days,
-            )
-            if certificate_age_days <= 14:
-                signals.append(
-                    _signal(
-                        "NEW_TLS_CERTIFICATE",
-                        Severity.MEDIUM,
-                        15,
-                        str(certificate_age_days),
-                    )
-                )
 
         return signals
 
@@ -91,10 +73,8 @@ class UrlAnalysisService:
                 signals.extend(self._metadata_signals(metadata))
                 if metadata.rdap_available:
                     sources.append("rdap")
-                if metadata.dns_available:
+                if metadata.dns_status == "available":
                     sources.append("dns")
-                if metadata.tls_available:
-                    sources.append("tls")
 
         score = min(sum(signal.points for signal in signals), 100)
 

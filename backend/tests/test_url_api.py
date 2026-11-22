@@ -7,6 +7,8 @@ from fastapi.testclient import TestClient
 from app.core.config import settings
 from app.common.utils.url_analysis import inspect_url
 from app.integrations.domain_metadata import DomainMetadata
+from app.integrations.domain_metadata import registered_domain
+from app.integrations import domain_metadata
 from app.main import app
 from app.repositories import CrudResult
 from app.services.url_analysis_service import UrlAnalysisService
@@ -115,16 +117,13 @@ def test_url_analysis_metadata_signals_recent_domain() -> None:
         DomainMetadata(
             domain="earumora-kuytbe.xyz",
             rdap_available=True,
-            dns_available=True,
-            tls_available=True,
+            dns_status="available",
             registration_date=now - timedelta(days=3),
-            certificate_not_before=now - timedelta(days=2),
         )
     )
 
     codes = {signal.code for signal in signals}
     assert "DOMAIN_TOO_NEW" in codes
-    assert "NEW_TLS_CERTIFICATE" in codes
 
 
 def test_url_analysis_metadata_signals_unresolved_domain() -> None:
@@ -132,8 +131,7 @@ def test_url_analysis_metadata_signals_unresolved_domain() -> None:
         DomainMetadata(
             domain="missing-domain.example",
             rdap_available=False,
-            dns_available=False,
-            tls_available=False,
+            dns_status="confirmed_negative",
         )
     )
 
@@ -150,13 +148,9 @@ def test_url_analysis_combines_metadata_sources(monkeypatch) -> None:
                 DomainMetadata(
                     domain="example.com",
                     rdap_available=True,
-                    dns_available=True,
-                    tls_available=True,
+                    dns_status="available",
                     registration_date=(
                         datetime.now(timezone.utc) - timedelta(days=3)
-                    ),
-                    certificate_not_before=(
-                        datetime.now(timezone.utc) - timedelta(days=2)
                     ),
                 )
             )
@@ -172,7 +166,66 @@ def test_url_analysis_combines_metadata_sources(monkeypatch) -> None:
 
     assert "rdap" in payload.sources
     assert "dns" in payload.sources
-    assert "tls" in payload.sources
+
+
+def test_url_analysis_metadata_dns_unavailable_is_not_malicious() -> None:
+    signals = UrlAnalysisService._metadata_signals(
+        DomainMetadata(
+            domain="example.com",
+            rdap_available=True,
+            dns_status="unavailable",
+        )
+    )
+
+    assert "DNS_UNRESOLVED" not in {
+        signal.code for signal in signals
+    }
+
+
+def test_registered_domain_uses_public_suffix_list() -> None:
+    assert registered_domain("login.example.co.za") == "example.co.za"
+
+
+def test_domain_metadata_rejects_private_and_ip_hosts() -> None:
+    for url in (
+        "http://127.0.0.1/admin",
+        "http://169.254.169.254/latest/meta-data",
+        "http://localhost:8000/health",
+        "http://[::1]/",
+    ):
+        result = asyncio.run(domain_metadata.query_domain_metadata(url))
+        assert result.is_error()
+
+
+def test_domain_metadata_uses_ttl_cache(monkeypatch) -> None:
+    domain_metadata._metadata_cache.clear()
+    call_count = {"rdap": 0, "dns": 0}
+
+    async def fake_rdap(domain: str):
+        del domain
+        call_count["rdap"] += 1
+        return True, datetime.now(timezone.utc) - timedelta(days=365)
+
+    async def fake_dns(domain: str):
+        del domain
+        call_count["dns"] += 1
+        return "available"
+
+    monkeypatch.setattr(domain_metadata, "_query_rdap", fake_rdap)
+    monkeypatch.setattr(domain_metadata, "_query_dns", fake_dns)
+
+    async def run_twice() -> None:
+        first = await domain_metadata.query_domain_metadata(
+            "https://example.com/page"
+        )
+        second = await domain_metadata.query_domain_metadata(
+            "https://example.com/other"
+        )
+        assert first.is_success()
+        assert second.is_success()
+
+    asyncio.run(run_twice())
+    assert call_count == {"rdap": 1, "dns": 1}
 
 
 def test_url_analysis_reports_campaign_and_temporary_links() -> None:

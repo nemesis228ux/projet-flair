@@ -121,7 +121,6 @@
     "DOMAIN_TOO_NEW": "Domain registered very recently",
     "DOMAIN_RECENT": "Domain registered less than one year ago",
     "DNS_UNRESOLVED": "Domain has no active DNS resolution",
-    "NEW_TLS_CERTIFICATE": "Recently created TLS certificate",
     "EMAIL_URGENCY": "Pressuring or alarming tone",
     "EMAIL_CREDENTIAL_REQUEST": "Request for login details or password",
     "EMAIL_MONEY_REQUEST": "Request for money or payment",
