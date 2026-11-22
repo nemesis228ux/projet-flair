@@ -119,10 +119,7 @@ _TRACKING_PARAMS = {
 }
 _OPAQUE_PATH_TOKEN = re.compile(r"^[A-Za-z0-9]{7,}$")
 _TIMESTAMP_PARAM = re.compile(r"^_t\d{8,}$")
-_TEMPORARY_PAGE_PATH = re.compile(
-    r"\.(?:html?|php|aspx?|jsp)(?:$|[/?])",
-    re.IGNORECASE,
-)
+_TEMPORARY_PAGE_EXTENSIONS = {"htm", "html", "php", "asp", "aspx", "jsp"}
 _NUMERIC_TRACKING_VALUE = re.compile(r"^\d{12,}$")
 
 
@@ -163,16 +160,20 @@ def _is_randomized_domain(domain_label: str) -> bool:
         return False
 
     parts = [part for part in normalized.split("-") if part]
-    if len(normalized) >= 14 and len(parts) >= 2:
-        return True
-    if len(normalized) >= 12 and _shannon_entropy(normalized) >= 3.2:
-        return True
-    if len(normalized) >= 6:
+    if len(parts) > 1:
         digit_count = sum(character.isdigit() for character in normalized)
-        letter_count = sum(character.isalpha() for character in normalized)
-        if digit_count >= 2 and digit_count / (digit_count + letter_count) >= 0.25:
-            return True
-    return False
+        return len(normalized) >= 12 and digit_count >= 2
+
+    if len(normalized) < 12:
+        return False
+    digit_count = sum(character.isdigit() for character in normalized)
+    letter_count = sum(character.isalpha() for character in normalized)
+    high_entropy = _shannon_entropy(normalized) >= 3.5
+    unusual_digits = (
+        digit_count >= 2
+        and digit_count / (digit_count + letter_count) >= 0.25
+    )
+    return high_entropy and unusual_digits
 
 
 def _is_typosquatting(domain_label: str) -> bool:
@@ -293,9 +294,12 @@ def _inspect_query(query: str) -> list[UrlRiskSignal]:
     ):
         signals.append(_signal("TRACKING_PARAMETER", Severity.LOW, 5))
     if any(
-        _NUMERIC_TRACKING_VALUE.fullmatch(value)
-        for values in params.values()
-        for value in values
+        param_name.lower() in _TRACKING_PARAMS
+        and any(
+            _NUMERIC_TRACKING_VALUE.fullmatch(value)
+            for value in values
+        )
+        for param_name, values in params.items()
     ) or any(
         _NUMERIC_TRACKING_VALUE.fullmatch(param_name)
         for param_name in params
@@ -307,7 +311,15 @@ def _inspect_query(query: str) -> list[UrlRiskSignal]:
 def _inspect_path(path: str) -> list[UrlRiskSignal]:
     segments = [segment for segment in path.split("/") if segment]
     signals: list[UrlRiskSignal] = []
-    if _TEMPORARY_PAGE_PATH.search(path):
+    opaque_filename = any(
+        "." in segment
+        and segment.rsplit(".", 1)[1].lower() in _TEMPORARY_PAGE_EXTENSIONS
+        and len(segment.rsplit(".", 1)[0]) >= 10
+        and any(character.isalpha() for character in segment.rsplit(".", 1)[0])
+        and any(character.isdigit() for character in segment.rsplit(".", 1)[0])
+        for segment in segments
+    )
+    if opaque_filename:
         signals.append(
             _signal("TEMPORARY_PAGE_PATH", Severity.MEDIUM, 16, detail=path)
         )
@@ -316,10 +328,7 @@ def _inspect_path(path: str) -> list[UrlRiskSignal]:
         for segment in segments
         if _OPAQUE_PATH_TOKEN.fullmatch(segment)
         and any(character.isalpha() for character in segment)
-        and (
-            any(character.isdigit() for character in segment)
-            or any(character.isupper() for character in segment)
-        )
+        and any(character.isdigit() for character in segment)
     ]
     if len(opaque_segments) >= 1:
         signals.append(

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import asyncio
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.core.config import settings
@@ -11,6 +12,11 @@ from app.repositories import CrudResult
 from app.services.url_analysis_service import UrlAnalysisService
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def disable_domain_metadata(monkeypatch):
+    monkeypatch.setattr(settings, "URL_METADATA_ENABLED", False)
 
 
 def test_url_analysis_uses_the_submitted_url_and_shared_wrapper() -> None:
@@ -170,29 +176,59 @@ def test_url_analysis_combines_metadata_sources(monkeypatch) -> None:
 
 
 def test_url_analysis_reports_campaign_and_temporary_links() -> None:
-    urls = (
+    cases = (
         (
             "https://earumora-kuytbe.xyz/CDMNBVCXZLKJCD.html"
-            "?pid=r_917624934242571"
+            "?pid=r_917624934242571",
+            {"SUSPICIOUS_TLD", "TRACKING_PARAMETER"},
         ),
-        "https://pdd.tg.999yes.xyz/tg/?guid=1007326&key=friend",
+        (
+            "https://pdd.tg.999yes.xyz/tg/?guid=1007326&key=friend",
+            {"SUSPICIOUS_TLD", "TRACKING_PARAMETER"},
+        ),
         (
             "https://earndfre-cduwbd.xyz/TGMNBVCXZLKJTG.html"
-            "?pid=r_917647150626626"
+            "?pid=r_917647150626626",
+            {"SUSPICIOUS_TLD", "TRACKING_PARAMETER"},
         ),
-        "https://casajoys.com/cdc60ak",
-        "https://wljra.buzz/UaviraNZvR/gh-fr?1221970658904224237&s=wa&",
+        (
+            "https://casajoys.com/cdc60ak",
+            {"OPAQUE_PATH_TOKEN"},
+        ),
+        (
+            "https://wljra.buzz/UaviraNZvR/gh-fr?"
+            "1221970658904224237&s=wa&",
+            {
+                "SUSPICIOUS_TLD",
+                "TRACKING_PARAMETER",
+                "CAMPAIGN_TRACKING_VALUE",
+            },
+        ),
     )
 
-    for url in urls:
+    for url, expected_codes in cases:
         signals = inspect_url(url)
         score = sum(signal.points for signal in signals)
         codes = {signal.code for signal in signals}
 
         assert score >= 20, (url, score, codes)
-        assert "TEMPORARY_PAGE_PATH" in codes or "OPAQUE_PATH_TOKEN" in codes or (
-            "RANDOMIZED_DOMAIN" in codes
-        ) or "SUSPICIOUS_TLD" in codes or "CAMPAIGN_TRACKING_VALUE" in codes
+        assert expected_codes <= codes, (url, expected_codes, codes)
+
+
+def test_url_analysis_does_not_flag_ordinary_paths_and_values() -> None:
+    ordinary_urls = (
+        "https://example-company.com/index.html",
+        "https://example.com/Welcome",
+        "https://example.com/products/dashboard",
+        "https://example.com/order?order_id=123456789012",
+    )
+
+    for url in ordinary_urls:
+        codes = {signal.code for signal in inspect_url(url)}
+        assert "RANDOMIZED_DOMAIN" not in codes
+        assert "TEMPORARY_PAGE_PATH" not in codes
+        assert "OPAQUE_PATH_TOKEN" not in codes
+        assert "CAMPAIGN_TRACKING_VALUE" not in codes
 
 
 def test_url_analysis_validates_input_length() -> None:
