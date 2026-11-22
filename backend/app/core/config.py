@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     GEMINI_MODEL: str
     METRICS_TOKEN: str
+    URL_METADATA_ENABLED: bool = False
+    URL_METADATA_TIMEOUT: float = 4.0
 
     model_config = SettingsConfigDict(
         env_file=".env",

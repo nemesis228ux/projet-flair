@@ -1,7 +1,14 @@
+from datetime import datetime, timedelta, timezone
+import asyncio
+
 from fastapi.testclient import TestClient
 
+from app.core.config import settings
 from app.common.utils.url_analysis import inspect_url
+from app.integrations.domain_metadata import DomainMetadata
 from app.main import app
+from app.repositories import CrudResult
+from app.services.url_analysis_service import UrlAnalysisService
 
 client = TestClient(app)
 
@@ -94,6 +101,72 @@ def test_url_analysis_reports_african_brand_typosquatting() -> None:
     ):
         result_codes = {signal.code for signal in inspect_url(url)}
         assert "TYPOSQUATTING" in result_codes
+
+
+def test_url_analysis_metadata_signals_recent_domain() -> None:
+    now = datetime.now(timezone.utc)
+    signals = UrlAnalysisService._metadata_signals(
+        DomainMetadata(
+            domain="earumora-kuytbe.xyz",
+            rdap_available=True,
+            dns_available=True,
+            tls_available=True,
+            registration_date=now - timedelta(days=3),
+            certificate_not_before=now - timedelta(days=2),
+        )
+    )
+
+    codes = {signal.code for signal in signals}
+    assert "DOMAIN_TOO_NEW" in codes
+    assert "NEW_TLS_CERTIFICATE" in codes
+
+
+def test_url_analysis_metadata_signals_unresolved_domain() -> None:
+    signals = UrlAnalysisService._metadata_signals(
+        DomainMetadata(
+            domain="missing-domain.example",
+            rdap_available=False,
+            dns_available=False,
+            tls_available=False,
+        )
+    )
+
+    assert "DNS_UNRESOLVED" in {
+        signal.code for signal in signals
+    }
+
+
+def test_url_analysis_combines_metadata_sources(monkeypatch) -> None:
+    class FakeMetadataRepository:
+        async def inspect(self, url: str):
+            del url
+            return CrudResult.crud_success(
+                DomainMetadata(
+                    domain="example.com",
+                    rdap_available=True,
+                    dns_available=True,
+                    tls_available=True,
+                    registration_date=(
+                        datetime.now(timezone.utc) - timedelta(days=3)
+                    ),
+                    certificate_not_before=(
+                        datetime.now(timezone.utc) - timedelta(days=2)
+                    ),
+                )
+            )
+
+    monkeypatch.setattr(settings, "URL_METADATA_ENABLED", True)
+    service = UrlAnalysisService(
+        metadata_repository=FakeMetadataRepository()
+    )
+    result = asyncio.run(
+        service.analyze("https://example.com", lang="en")
+    )
+    payload = result.data
+
+    assert "rdap" in payload.sources
+    assert "dns" in payload.sources
+    assert "tls" in payload.sources
 
 
 def test_url_analysis_reports_campaign_and_temporary_links() -> None:

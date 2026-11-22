@@ -189,6 +189,40 @@ _MESSAGES: dict[str, dict[str, str]] = {
             "or campaign tracking."
         ),
     },
+    "DOMAIN_TOO_NEW": {
+        "fr": (
+            "Le domaine a été enregistré récemment ({detail} jour(s)), "
+            "ce qui augmente le risque dans les campagnes frauduleuses temporaires."
+        ),
+        "en": (
+            "The domain was registered recently ({detail} day(s)), "
+            "which increases risk for temporary fraud campaigns."
+        ),
+    },
+    "DOMAIN_RECENT": {
+        "fr": (
+            "Le domaine a moins d'un an ({detail} jour(s)), "
+            "ce qui justifie une vérification supplémentaire."
+        ),
+        "en": (
+            "The domain is less than one year old ({detail} day(s)), "
+            "which warrants additional caution."
+        ),
+    },
+    "DNS_UNRESOLVED": {
+        "fr": "Le domaine ne résout pas actuellement vers une adresse publique.",
+        "en": "The domain does not currently resolve to a public address.",
+    },
+    "NEW_TLS_CERTIFICATE": {
+        "fr": (
+            "Le certificat TLS est récent ({detail} jour(s)), "
+            "ce qui peut accompagner une campagne temporaire."
+        ),
+        "en": (
+            "The TLS certificate is recent ({detail} day(s)), "
+            "which can accompany a temporary campaign."
+        ),
+    },
 }
 
 _FALLBACK_LANG = "fr"

@@ -1,17 +1,101 @@
+from datetime import datetime, timezone
+
 from app.common.business_error import AppError
-from app.common.utils.url_analysis import inspect_url
+from app.common.utils.url_analysis import (
+    UrlRiskSignal,
+    _signal,
+    inspect_url,
+)
 from app.common.utils.url_analysis_i18n import get_signal_detail
-from app.schemas.analysis import AnalysisResult, Reason, Verdict
+from app.core.config import settings
+from app.integrations.domain_metadata import DomainMetadata
+from app.repositories.url_metadata_repository import UrlMetadataRepository
+from app.schemas.analysis import AnalysisResult, Reason, Severity, Verdict
 from app.services import ServiceResult
 
 
 class UrlAnalysisService:
     service_name = "URL_ANALYSIS_SERVICE"
 
-    def analyze(
+    def __init__(
+        self,
+        metadata_repository: UrlMetadataRepository | None = None,
+    ) -> None:
+        self.metadata_repository = (
+            metadata_repository or UrlMetadataRepository()
+        )
+
+    @staticmethod
+    def _metadata_signals(
+        metadata: DomainMetadata,
+    ) -> list[UrlRiskSignal]:
+        signals: list[UrlRiskSignal] = []
+        now = datetime.now(timezone.utc)
+
+        if metadata.registration_date is not None:
+            registered = metadata.registration_date
+            if registered.tzinfo is None:
+                registered = registered.replace(tzinfo=timezone.utc)
+            age_days = max(
+                0,
+                (now - registered.astimezone(timezone.utc)).days,
+            )
+            if age_days <= 7:
+                signals.append(
+                    _signal("DOMAIN_TOO_NEW", Severity.HIGH, 35, str(age_days))
+                )
+            elif age_days <= 30:
+                signals.append(
+                    _signal("DOMAIN_TOO_NEW", Severity.MEDIUM, 25, str(age_days))
+                )
+            elif age_days <= 365:
+                signals.append(
+                    _signal("DOMAIN_RECENT", Severity.LOW, 10, str(age_days))
+                )
+
+        if not metadata.dns_available:
+            signals.append(
+                _signal("DNS_UNRESOLVED", Severity.HIGH, 30)
+            )
+
+        if metadata.certificate_not_before is not None:
+            certificate_date = metadata.certificate_not_before
+            if certificate_date.tzinfo is None:
+                certificate_date = certificate_date.replace(tzinfo=timezone.utc)
+            certificate_age_days = max(
+                0,
+                (now - certificate_date.astimezone(timezone.utc)).days,
+            )
+            if certificate_age_days <= 14:
+                signals.append(
+                    _signal(
+                        "NEW_TLS_CERTIFICATE",
+                        Severity.MEDIUM,
+                        15,
+                        str(certificate_age_days),
+                    )
+                )
+
+        return signals
+
+    async def analyze(
         self, url: str, lang: str = "fr"
     ) -> ServiceResult[AnalysisResult, AppError]:
         signals = inspect_url(url)
+        sources = ["heuristics"]
+
+        if settings.URL_METADATA_ENABLED:
+            metadata_result = await self.metadata_repository.inspect(url)
+            if metadata_result.is_success():
+                metadata = metadata_result.data
+                signals.extend(self._metadata_signals(metadata))
+                if metadata.rdap_available:
+                    sources.append("rdap")
+                if metadata.dns_available:
+                    sources.append("dns")
+                if metadata.tls_available:
+                    sources.append("tls")
+
         score = min(sum(signal.points for signal in signals), 100)
 
         if score >= 60:
@@ -32,7 +116,7 @@ class UrlAnalysisService:
                 )
                 for signal in signals
             ],
-            sources=["heuristics"],
+            sources=sources,
         )
         return ServiceResult.service_success(
             data=result,

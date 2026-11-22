@@ -24,6 +24,8 @@ HTTP router
 - `app/services/`: feature orchestration and score/verdict composition.
 - `app/common/`: shared result types, errors, constants, and pure utilities.
 - `app/integrations/`: provider clients such as Gemini and HIBP.
+- `app/integrations/domain_metadata.py`: RDAP, DNS, and TLS metadata lookup.
+- `app/repositories/url_metadata_repository.py`: wrapper adapter for metadata data.
 - `app/core/`: configuration, logging, and rate limiting.
 - `app/settings/`: application lifespan and CORS setup.
 - `tests/`: focused API, service, heuristic, and integration tests.
