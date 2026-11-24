@@ -79,7 +79,10 @@
       "hibp": "Have I Been Pwned database",
       "llm": "AI text analysis",
       "rdap": "Domain RDAP information",
-      "dns": "Domain DNS resolution"
+      "dns": "Domain DNS resolution",
+      "google_safe_browsing": "Google Safe Browsing",
+      "urlhaus": "URLhaus",
+      "virustotal": "VirusTotal"
     },
     "sourceDetails": {
       "heuristics": "Automated checks for common characteristics associated with risk.",
@@ -88,6 +91,9 @@
       "llm": "Helps explain the content and possible manipulation tactics.",
       "rdap": "Checks public registration data for the domain.",
       "dns": "Checks whether the domain resolves to a public address or confirms it does not resolve.",
+      "google_safe_browsing": "Checks the URL against Google's threat lists.",
+      "urlhaus": "Checks whether the URL is associated with malware distribution.",
+      "virustotal": "Compares the URL with antivirus and security-service analyses.",
       "other": "This source contributed to the analysis."
     },
     "verdict": {
@@ -125,6 +131,10 @@
     "DOMAIN_TOO_NEW": "Domain registered very recently",
     "DOMAIN_RECENT": "Domain registered less than one year ago",
     "DNS_UNRESOLVED": "Domain has no active DNS resolution",
+    "GOOGLE_SAFE_BROWSING_MATCH": "Known threat according to Google Safe Browsing",
+    "URLHAUS_MATCH": "URL associated with malware according to URLhaus",
+    "VIRUSTOTAL_MALICIOUS": "URL detected as malicious by VirusTotal",
+    "VIRUSTOTAL_SUSPICIOUS": "URL detected as suspicious by VirusTotal",
     "EMAIL_URGENCY": "Pressuring or alarming tone",
     "EMAIL_CREDENTIAL_REQUEST": "Request for login details or password",
     "EMAIL_MONEY_REQUEST": "Request for money or payment",

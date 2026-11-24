@@ -10,6 +10,7 @@ from app.common.utils.url_analysis_i18n import get_signal_detail
 from app.core.config import settings
 from app.integrations.domain_metadata import DomainMetadata
 from app.repositories.url_metadata_repository import UrlMetadataRepository
+from app.repositories.url_reputation_repository import UrlReputationRepository
 from app.schemas.analysis import AnalysisResult, Reason, Severity, Verdict
 from app.services import ServiceResult
 
@@ -20,9 +21,13 @@ class UrlAnalysisService:
     def __init__(
         self,
         metadata_repository: UrlMetadataRepository | None = None,
+        reputation_repository: UrlReputationRepository | None = None,
     ) -> None:
         self.metadata_repository = (
             metadata_repository or UrlMetadataRepository()
+        )
+        self.reputation_repository = (
+            reputation_repository or UrlReputationRepository()
         )
 
     @staticmethod
@@ -78,6 +83,21 @@ class UrlAnalysisService:
                     "confirmed_negative",
                 }:
                     sources.append("dns")
+
+        if settings.URL_REPUTATION_ENABLED:
+            reputation_result = await self.reputation_repository.inspect(url)
+            if reputation_result.is_success():
+                reputation = reputation_result.data
+                for match in reputation.matches:
+                    signals.append(
+                        _signal(
+                            match.code,
+                            Severity(match.severity),
+                            match.points,
+                        )
+                    )
+                    if match.source not in sources:
+                        sources.append(match.source)
 
         score = min(sum(signal.points for signal in signals), 100)
 

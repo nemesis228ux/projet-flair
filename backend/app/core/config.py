@@ -25,6 +25,14 @@ class Settings(BaseSettings):
     URL_METADATA_CACHE_TTL: int = 3600
     URL_METADATA_CACHE_MAXSIZE: int = 2048
     URL_METADATA_MAX_CONCURRENT: int = 8
+    URL_REPUTATION_ENABLED: bool = True
+    URL_REPUTATION_TIMEOUT: float = 8.0
+    URL_REPUTATION_CACHE_TTL: int = 1800
+    URL_REPUTATION_CACHE_MAXSIZE: int = 4096
+    URL_REPUTATION_MAX_CONCURRENT: int = 6
+    URLHAUS_ENABLED: bool = True
+    GOOGLE_SAFE_BROWSING_API_KEY: str = ""
+    VIRUSTOTAL_API_KEY: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",

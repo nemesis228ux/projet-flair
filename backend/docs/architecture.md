@@ -25,7 +25,9 @@ HTTP router
 - `app/common/`: shared result types, errors, constants, and pure utilities.
 - `app/integrations/`: provider clients such as Gemini and HIBP.
 - `app/integrations/domain_metadata.py`: IANA-discovered RDAP and public-address DNS metadata lookup.
+- `app/integrations/url_reputation.py`: URLhaus, Google Safe Browsing, and VirusTotal reputation checks.
 - `app/repositories/url_metadata_repository.py`: wrapper adapter for metadata data.
+- `app/repositories/url_reputation_repository.py`: wrapper adapter for external reputation data.
 - `app/core/`: configuration, logging, and rate limiting.
 - `app/settings/`: application lifespan and CORS setup.
 - `tests/`: focused API, service, heuristic, and integration tests.

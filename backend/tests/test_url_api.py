@@ -11,6 +11,10 @@ from app.integrations.domain_metadata import registered_domain
 from app.integrations import domain_metadata
 from app.main import app
 from app.repositories import CrudResult
+from app.integrations.url_reputation import (
+    ReputationMatch,
+    ReputationResult,
+)
 from app.services.url_analysis_service import UrlAnalysisService
 
 client = TestClient(app)
@@ -161,6 +165,38 @@ def test_url_analysis_confirms_dns_source_for_unresolved_domain(monkeypatch) -> 
     )
 
     assert "dns" in result.data.sources
+
+
+def test_url_analysis_combines_external_reputation_match(monkeypatch) -> None:
+    class FakeReputationRepository:
+        async def inspect(self, url: str):
+            del url
+            return CrudResult.crud_success(
+                ReputationResult(
+                    matches=(
+                        ReputationMatch(
+                            source="urlhaus",
+                            code="URLHAUS_MATCH",
+                            severity="high",
+                            points=55,
+                        ),
+                    )
+                )
+            )
+
+    monkeypatch.setattr(settings, "URL_METADATA_ENABLED", False)
+    monkeypatch.setattr(settings, "URL_REPUTATION_ENABLED", True)
+    service = UrlAnalysisService(
+        reputation_repository=FakeReputationRepository()
+    )
+    result = asyncio.run(
+        service.analyze("https://malware.example/link", lang="en")
+    )
+
+    assert {reason.code for reason in result.data.reasons} >= {
+        "URLHAUS_MATCH"
+    }
+    assert "urlhaus" in result.data.sources
 
 
 def test_url_analysis_combines_metadata_sources(monkeypatch) -> None:
